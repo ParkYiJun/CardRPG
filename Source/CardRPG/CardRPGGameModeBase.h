@@ -13,5 +13,7 @@ UCLASS()
 class CARDRPG_API ACardRPGGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+	ACardRPGGameModeBase();
 	
 };
