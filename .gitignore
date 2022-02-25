@@ -72,3 +72,17 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+
+Content/DungeonLamps/Textures/T_DungeonLamps_004_aorame.uasset 
+Content/DungeonLamps/Textures/T_DungeonLamps_002_cc.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_002_nm.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_003_aorame.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_003_nm.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_004_cc.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_001_aorame.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_001_nm.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_004_nme.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_003_cc.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_001_cc.uasset
+Content/DungeonLamps/Textures/T_DungeonLamps_002_aorame.uasset
