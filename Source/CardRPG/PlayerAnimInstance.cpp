@@ -42,7 +42,10 @@ void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UPlayerAnimInstance::PlayAttackMontage()
 {
-	Montage_Play(AttackMontage, 1.0f);
+	if (!Montage_IsPlaying(AttackMontage))
+	{
+		Montage_Play(AttackMontage, 1.0f);
+	}
 }
 
 void UPlayerAnimInstance::JumpToSection(int32 SectionIndex)

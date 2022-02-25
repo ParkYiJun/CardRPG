@@ -17,9 +17,13 @@ public:
 	// Sets default values for this character's properties
 	AMainCharacter();
 
+	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void PostInitializeComponents() override;
 
 public:	
 	// Called every frame
@@ -28,6 +32,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION()
+		void OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted);
 
 	void UpDown(float Value);
 	void LeftRight(float Value);
@@ -37,8 +43,7 @@ public:
 
 	FOnAttackEnd OnAttackEnd;
 
-	UFUNCTION()
-		void OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted);
+	
 
 
 private:
@@ -64,5 +69,8 @@ public:
 
 	UPROPERTY()
 		float LeftRightValue = 0;
+
+	UPROPERTY(VisibleAnywhere, Category = Pawn)
+		bool DontMove = false;
 
 };

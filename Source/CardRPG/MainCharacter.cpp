@@ -22,7 +22,7 @@ AMainCharacter::AMainCharacter()
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 
-	SpringArm->TargetArmLength = 500.0f;
+	SpringArm->TargetArmLength = 400.0f;
 	SpringArm->SetRelativeRotation(FRotator(-35.0f, 0.0f, 0.0f));
 
 	GetMesh()->SetRelativeLocationAndRotation(
@@ -31,7 +31,8 @@ AMainCharacter::AMainCharacter()
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SM(TEXT("SkeletalMesh'/Game/ParagonPhase/Characters/Heroes/Phase/Meshes/Phase_GDC.Phase_GDC'"));
 
 	if (SM.Succeeded())
-	{
+	{	
+		UE_LOG(LogTemp,Warning,TEXT("GetMesh Succeeded"));
 		GetMesh()->SetSkeletalMesh(SM.Object);
 	}
 
@@ -42,6 +43,18 @@ void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AMainCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AnimInstance = Cast<UPlayerAnimInstance>(GetMesh()->GetAnimInstance());
+	if (AnimInstance)
+	{
+		AnimInstance->OnMontageEnded.AddDynamic(this, &AMainCharacter::OnAttackMontageEnded);
+		AnimInstance->OnAttackHit.AddUObject(this, &AMainCharacter::AttackCheck);
+	}
+
 }
 
 // Called every frame
@@ -59,20 +72,27 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AMainCharacter::LeftRight);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AMainCharacter::Yaw);
 	PlayerInputComponent->BindAction(TEXT("Attack"),EInputEvent::IE_Pressed,this,&AMainCharacter::Attack);
+	PlayerInputComponent->BindAction(TEXT("Jump"),EInputEvent::IE_Pressed,this, &AMainCharacter::Jump);
 }
 
 void AMainCharacter::UpDown(float Value)
-{
-	//UE_LOG(LogTemp,Warning,TEXT("UPDOWN %f"),Value);
-	UpdownValue = Value;
-	AddMovementInput(GetActorForwardVector(), Value);
+{	
+	if (IsAttacking==false)
+	{
+		UpdownValue = Value;
+		AddMovementInput(GetActorForwardVector(), Value);
+	}
+
 
 }
 
 void AMainCharacter::LeftRight(float Value)
 {
-	LeftRightValue = Value;
-	AddMovementInput(GetActorRightVector(), Value);
+	if (IsAttacking==false)
+	{
+		LeftRightValue = Value;
+		AddMovementInput(GetActorRightVector(), Value);
+	}
 }
 
 void AMainCharacter::Yaw(float Value)
@@ -90,8 +110,7 @@ void AMainCharacter::Attack()
 
 	AnimInstance->JumpToSection(AttackIndex);
 
-	AttackIndex = (AttackIndex + 1) % 3;
-
+	AttackIndex = (AttackIndex + 1) % 5;
 	IsAttacking = true;
 
 }
