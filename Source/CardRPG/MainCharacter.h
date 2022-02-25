@@ -39,7 +39,9 @@ public:
 	void LeftRight(float Value);
 	void Yaw(float Value);
 	void Attack();
+	void DroneAttack();
 	void AttackCheck();
+
 
 	FOnAttackEnd OnAttackEnd;
 
@@ -55,7 +57,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* CastFrom;
+public:
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+		class USceneComponent* Drone;
+
+private:
 
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool IsAttacking = false;
