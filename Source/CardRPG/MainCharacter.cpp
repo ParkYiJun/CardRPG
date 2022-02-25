@@ -5,10 +5,12 @@
 #include"GameFramework/SpringArmComponent.h"
 #include"Camera/CameraComponent.h"
 #include"Components/CapsuleComponent.h"
+#include "Components/SceneComponent.h"
 #include "Components/WidgetComponent.h"
 #include "DrawDebughelpers.h"
 #include "PlayerAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Bullet.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -18,23 +20,29 @@ AMainCharacter::AMainCharacter()
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	CastFrom= CreateDefaultSubobject<USceneComponent>(TEXT("CASTFROM"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
+	CastFrom->SetupAttachment(GetCapsuleComponent());
 
-	SpringArm->TargetArmLength = 400.0f;
-	SpringArm->SetRelativeRotation(FRotator(-35.0f, 0.0f, 0.0f));
+	SpringArm->TargetArmLength = 350.0f;
+	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
+	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
 
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
 
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SM(TEXT("SkeletalMesh'/Game/ParagonPhase/Characters/Heroes/Phase/Meshes/Phase_GDC.Phase_GDC'"));
+
 
 	if (SM.Succeeded())
 	{	
 		UE_LOG(LogTemp,Warning,TEXT("GetMesh Succeeded"));
 		GetMesh()->SetSkeletalMesh(SM.Object);
 	}
+
 
 }
 
@@ -107,6 +115,10 @@ void AMainCharacter::Attack()
 		return;
 	}
 	AnimInstance->PlayAttackMontage();
+
+	FVector SpawnLocation= CastFrom->GetComponentLocation();
+	FRotator SpawnRotation=GetCapsuleComponent()->GetComponentRotation();
+	GetWorld()->SpawnActor<ABullet>(SpawnLocation,SpawnRotation);
 
 	AnimInstance->JumpToSection(AttackIndex);
 

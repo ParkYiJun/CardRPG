@@ -53,6 +53,10 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* CastFrom;
+
+
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool IsAttacking = false;
 
@@ -62,7 +66,9 @@ private:
 	UPROPERTY()
 		int32 AttackIndex = 0;
 
+
 public:
+
 
 	UPROPERTY()
 		float UpdownValue = 0;
