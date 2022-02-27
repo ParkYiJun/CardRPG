@@ -58,9 +58,11 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* CastFrom;
 public:
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* DroneLocation;
+	UPROPERTY()
+		class AFollowingDrone* FollowingDrone;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
-		class USceneComponent* Drone;
 
 private:
 

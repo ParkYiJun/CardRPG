@@ -7,11 +7,13 @@
 #include "AIController.h"
 #include "Components/SceneComponent.h"
 
+
 // Sets default values
 AFollowingDrone::AFollowingDrone()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 
 }
 
@@ -21,7 +23,12 @@ void AFollowingDrone::BeginPlay()
 	Super::BeginPlay();
 
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	AIController = Cast<AAIController>(GetController());
+
 	
+
+
+
 	FTimerHandle WaitHandle;
 	float WaitTime =0.2f; //시간을 설정하고
 	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
@@ -41,14 +48,14 @@ void AFollowingDrone::Tick(float DeltaTime)
 void AFollowingDrone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AFollowingDrone::FollowPlayer()
 {
-	AAIController* AIController = Cast<AAIController>(GetController());
-	FVector DS = MainCharacter->Drone->GetRelativeLocation();
+	auto Drone = MainCharacter->DroneLocation;
+	//UE_LOG(LogTemp,Warning,TEXT("a"));
 
+	FVector DS = Drone->GetComponentLocation();
 
 if (GetDistanceTo(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))<=1000.0f)
 {

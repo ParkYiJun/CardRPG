@@ -21,17 +21,17 @@ AMainCharacter::AMainCharacter()
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 	CastFrom= CreateDefaultSubobject<USceneComponent>(TEXT("CASTFROM"));
-	Drone = CreateDefaultSubobject<USceneComponent>(TEXT("DRONE"));
+	DroneLocation= CreateDefaultSubobject<USceneComponent>(TEXT("DRONELOCATION"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 	CastFrom->SetupAttachment(GetCapsuleComponent());
-	Drone->SetupAttachment(GetCapsuleComponent());
+	DroneLocation->SetupAttachment(GetCapsuleComponent());
 
 	SpringArm->TargetArmLength = 350.0f;
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
-	Drone->SetRelativeLocation(FVector(5,140,45));
+	DroneLocation->SetRelativeLocation(FVector(5.0f, 140.0f, 45.0f));
 
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
@@ -134,6 +134,9 @@ void AMainCharacter::Attack()
 void AMainCharacter::DroneAttack()
 {
 
+	FVector SpawnLocation = DroneLocation->GetComponentLocation();
+	FRotator SpawnRotation = DroneLocation->GetComponentRotation();
+	GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
 }
 
 void AMainCharacter::AttackCheck()
