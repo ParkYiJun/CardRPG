@@ -11,6 +11,7 @@
 #include "PlayerAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Bullet.h"
+#include "WallSkill.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -34,7 +35,7 @@ AMainCharacter::AMainCharacter()
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
 	DroneLocation->SetRelativeLocation(FVector(5.0f, 140.0f, 45.0f));
-	WallLocation->SetRelativeLocation(FVector(500.0f, 0.f,0.0));
+	WallLocation->SetRelativeLocation(FVector(1000.0f, 0.f,-88.0f));
 
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
@@ -143,7 +144,8 @@ void AMainCharacter::WallSkill()
 	}
 	AnimInstance->PlayWallSkillMontage();
 	FVector SpawnLocation = WallLocation->GetComponentLocation();
-	FVector SpawnRotation = GetCapsuleComponent->GetComponentRotation();
+	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+	GetWorld()->SpawnActor<AWallSkill>(SpawnLocation,SpawnRotation);
 	IsSkillUsing= true;
 }
 
