@@ -39,6 +39,7 @@ public:
 	void LeftRight(float Value);
 	void Yaw(float Value);
 	void Attack();
+	void WallSkill();
 	void DroneAttack();
 	void AttackCheck();
 
@@ -60,6 +61,9 @@ private:
 public:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* DroneLocation;
+
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* WallLocation;
 	UPROPERTY()
 		class AFollowingDrone* FollowingDrone;
 
@@ -68,6 +72,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool IsAttacking = false;
+
+	UPROPERTY(VisibleAnywhere, Category = Pawn)
+		bool IsSkillUsing = false;
 
 	UPROPERTY()
 		class UPlayerAnimInstance* AnimInstance;

@@ -22,16 +22,19 @@ AMainCharacter::AMainCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 	CastFrom= CreateDefaultSubobject<USceneComponent>(TEXT("CASTFROM"));
 	DroneLocation= CreateDefaultSubobject<USceneComponent>(TEXT("DRONELOCATION"));
+	WallLocation= CreateDefaultSubobject<USceneComponent>(TEXT("WALLLOCATION"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 	CastFrom->SetupAttachment(GetCapsuleComponent());
 	DroneLocation->SetupAttachment(GetCapsuleComponent());
+	WallLocation->SetupAttachment(GetCapsuleComponent());
 
 	SpringArm->TargetArmLength = 350.0f;
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
 	DroneLocation->SetRelativeLocation(FVector(5.0f, 140.0f, 45.0f));
+	WallLocation->SetRelativeLocation(FVector(500.0f, 0.f,0.0));
 
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
@@ -85,11 +88,12 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Attack"),EInputEvent::IE_Pressed,this,&AMainCharacter::Attack);
 	PlayerInputComponent->BindAction(TEXT("Jump"),EInputEvent::IE_Pressed,this, &AMainCharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
+	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
 }
 
 void AMainCharacter::UpDown(float Value)
 {	
-	if (IsAttacking==false)
+	if ((IsAttacking==false)&&(IsSkillUsing==false))
 	{
 		UpdownValue = Value;
 		AddMovementInput(GetActorForwardVector(), Value);
@@ -100,7 +104,7 @@ void AMainCharacter::UpDown(float Value)
 
 void AMainCharacter::LeftRight(float Value)
 {
-	if (IsAttacking==false)
+	if ((IsAttacking == false) && (IsSkillUsing == false))
 	{
 		LeftRightValue = Value;
 		AddMovementInput(GetActorRightVector(), Value);
@@ -129,6 +133,18 @@ void AMainCharacter::Attack()
 	AttackIndex = (AttackIndex + 1) % 5;
 	IsAttacking = true;
 
+}
+
+void AMainCharacter::WallSkill()
+{
+	if (IsSkillUsing)
+	{
+	return;
+	}
+	AnimInstance->PlayWallSkillMontage();
+	FVector SpawnLocation = WallLocation->GetComponentLocation();
+	FVector SpawnRotation = GetCapsuleComponent->GetComponentRotation();
+	IsSkillUsing= true;
 }
 
 void AMainCharacter::DroneAttack()
@@ -180,7 +196,7 @@ void AMainCharacter::AttackCheck()
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)
 {
 	IsAttacking = false;
+	IsSkillUsing=false;
 
 	OnAttackEnd.Broadcast();
 }
-
