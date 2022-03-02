@@ -12,6 +12,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Bullet.h"
 #include "WallSkill.h"
+#include "RangeSkill.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -142,11 +143,18 @@ void AMainCharacter::WallSkill()
 	{
 	return;
 	}
+	
 	AnimInstance->PlayWallSkillMontage();
 	FVector SpawnLocation = WallLocation->GetComponentLocation();
 	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
-	GetWorld()->SpawnActor<AWallSkill>(SpawnLocation,SpawnRotation);
+	GetWorld()->SpawnActor<ARangeSkill>(SpawnLocation,SpawnRotation);
+
 	IsSkillUsing= true;
+}
+
+void AMainCharacter::RangeSkill()
+{
+
 }
 
 void AMainCharacter::DroneAttack()

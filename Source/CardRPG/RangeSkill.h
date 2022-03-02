@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "WallSkill.generated.h"
+#include "RangeSkill.generated.h"
 
 UCLASS()
-class CARDRPG_API AWallSkill : public AActor
+class CARDRPG_API ARangeSkill : public AActor
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(VisibleDefaultsOnly, Category = Wall)
+
+		UPROPERTY(VisibleDefaultsOnly, Category = RangeSkill)
 		class UBoxComponent* CollisionComp;
-public:	
+public:
 	// Sets default values for this actor's properties
-	AWallSkill();
+	ARangeSkill();
 
 	UPROPERTY(VisibleAnywhere)
 		class UParticleSystemComponent* PSC;
@@ -24,6 +24,9 @@ public:
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
 
 
+	
+public:	
+	// Sets default values for this actor's properties
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

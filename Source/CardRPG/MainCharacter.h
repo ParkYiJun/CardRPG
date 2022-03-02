@@ -40,6 +40,7 @@ public:
 	void Yaw(float Value);
 	void Attack();
 	void WallSkill();
+	void RangeSkill();
 	void DroneAttack();
 	void AttackCheck();
 
