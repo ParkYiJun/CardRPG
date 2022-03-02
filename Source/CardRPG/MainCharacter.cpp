@@ -5,10 +5,12 @@
 #include"GameFramework/SpringArmComponent.h"
 #include"Camera/CameraComponent.h"
 #include"Components/CapsuleComponent.h"
+#include "Components/SceneComponent.h"
 #include "Components/WidgetComponent.h"
 #include "DrawDebughelpers.h"
 #include "PlayerAnimInstance.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Bullet.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -18,23 +20,32 @@ AMainCharacter::AMainCharacter()
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	CastFrom= CreateDefaultSubobject<USceneComponent>(TEXT("CASTFROM"));
+	DroneLocation= CreateDefaultSubobject<USceneComponent>(TEXT("DRONELOCATION"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
+	CastFrom->SetupAttachment(GetCapsuleComponent());
+	DroneLocation->SetupAttachment(GetCapsuleComponent());
 
-	SpringArm->TargetArmLength = 400.0f;
-	SpringArm->SetRelativeRotation(FRotator(-35.0f, 0.0f, 0.0f));
+	SpringArm->TargetArmLength = 350.0f;
+	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
+	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
+	DroneLocation->SetRelativeLocation(FVector(5.0f, 140.0f, 45.0f));
 
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
 
+
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SM(TEXT("SkeletalMesh'/Game/ParagonPhase/Characters/Heroes/Phase/Meshes/Phase_GDC.Phase_GDC'"));
+
 
 	if (SM.Succeeded())
 	{	
 		UE_LOG(LogTemp,Warning,TEXT("GetMesh Succeeded"));
 		GetMesh()->SetSkeletalMesh(SM.Object);
 	}
+
 
 }
 
@@ -73,6 +84,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AMainCharacter::Yaw);
 	PlayerInputComponent->BindAction(TEXT("Attack"),EInputEvent::IE_Pressed,this,&AMainCharacter::Attack);
 	PlayerInputComponent->BindAction(TEXT("Jump"),EInputEvent::IE_Pressed,this, &AMainCharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 }
 
 void AMainCharacter::UpDown(float Value)
@@ -108,11 +120,23 @@ void AMainCharacter::Attack()
 	}
 	AnimInstance->PlayAttackMontage();
 
+	FVector SpawnLocation= CastFrom->GetComponentLocation();
+	FRotator SpawnRotation=GetCapsuleComponent()->GetComponentRotation();
+	GetWorld()->SpawnActor<ABullet>(SpawnLocation,SpawnRotation);
+
 	AnimInstance->JumpToSection(AttackIndex);
 
 	AttackIndex = (AttackIndex + 1) % 5;
 	IsAttacking = true;
 
+}
+
+void AMainCharacter::DroneAttack()
+{
+
+	FVector SpawnLocation = DroneLocation->GetComponentLocation();
+	FRotator SpawnRotation = DroneLocation->GetComponentRotation();
+	GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
 }
 
 void AMainCharacter::AttackCheck()

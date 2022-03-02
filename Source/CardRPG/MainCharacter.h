@@ -39,7 +39,9 @@ public:
 	void LeftRight(float Value);
 	void Yaw(float Value);
 	void Attack();
+	void DroneAttack();
 	void AttackCheck();
+
 
 	FOnAttackEnd OnAttackEnd;
 
@@ -53,6 +55,17 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* CastFrom;
+public:
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* DroneLocation;
+	UPROPERTY()
+		class AFollowingDrone* FollowingDrone;
+
+
+private:
+
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool IsAttacking = false;
 
@@ -62,7 +75,9 @@ private:
 	UPROPERTY()
 		int32 AttackIndex = 0;
 
+
 public:
+
 
 	UPROPERTY()
 		float UpdownValue = 0;
