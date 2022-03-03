@@ -14,6 +14,11 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 	{
 		AttackMontage = AM.Object;
 	}
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> WM(TEXT("AnimMontage'/Game/Animation/Phase_WallSkill_Montage.Phase_WallSkill_Montage'"));
+	if (WM.Succeeded())
+	{
+		WallSkillMontage=WM.Object;
+	}
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -48,6 +53,15 @@ void UPlayerAnimInstance::PlayAttackMontage()
 	}
 }
 
+void UPlayerAnimInstance::PlayWallSkillMontage()
+{
+	if (!Montage_IsPlaying(WallSkillMontage))
+	{
+		Montage_Play(WallSkillMontage, 1.0f);
+	}
+
+}
+
 void UPlayerAnimInstance::JumpToSection(int32 SectionIndex)
 {
 	FName Name = GetAttackMontageName(SectionIndex);
@@ -56,7 +70,6 @@ void UPlayerAnimInstance::JumpToSection(int32 SectionIndex)
 
 FName UPlayerAnimInstance::GetAttackMontageName(int32 SectionIndex)
 {
-
 
 	return FName(FString::Printf(TEXT("Attack%d"), SectionIndex));
 }

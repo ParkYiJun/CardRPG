@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "FollowingDrone.generated.h"
 
+
 UCLASS()
 class CARDRPG_API AFollowingDrone : public ACharacter
 {
@@ -28,7 +29,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
-
 	UPROPERTY()
 		class AMainCharacter* MainCharacter;
 
@@ -36,6 +36,7 @@ public:
 		class AAIController* AIController;
 
 
-
 	void FollowPlayer();
+private:
+	
 };

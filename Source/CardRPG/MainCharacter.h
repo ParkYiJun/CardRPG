@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "FollowingDrone.h"
 #include "MainCharacter.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
@@ -39,11 +40,16 @@ public:
 	void LeftRight(float Value);
 	void Yaw(float Value);
 	void Attack();
-	void DroneAttack();
+	void WallSkill();
+	void RangeSkill();
+	void Teleport();
 	void AttackCheck();
+	void DroneAttack();
 
 
 	FOnAttackEnd OnAttackEnd;
+	FTimerHandle WaitHandle;
+	FTimerHandle WaitHandleDrone;
 
 	
 
@@ -60,14 +66,28 @@ private:
 public:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* DroneLocation;
-	UPROPERTY()
+
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* FireTornadoLocation;
+
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* IceSkillLocation;
+
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* TeleportLocation;
+
+	UPROPERTY(VisibleAnywhere)
 		class AFollowingDrone* FollowingDrone;
+
 
 
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool IsAttacking = false;
+
+	UPROPERTY(VisibleAnywhere, Category = Pawn)
+		bool IsSkillUsing = false;
 
 	UPROPERTY()
 		class UPlayerAnimInstance* AnimInstance;
@@ -87,5 +107,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool DontMove = false;
+
+		UPROPERTY()
+		bool DroneIsAttacking=false;
 
 };

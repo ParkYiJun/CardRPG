@@ -24,6 +24,8 @@ public:
 
 		void PlayAttackMontage();
 
+		void PlayWallSkillMontage();
+
 		void JumpToSection(int32 SectionIndex);
 
 		FName GetAttackMontageName(int32 SectionIndex);
@@ -41,6 +43,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* WallSkillMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float Horizontal;
