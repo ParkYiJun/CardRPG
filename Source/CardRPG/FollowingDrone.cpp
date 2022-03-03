@@ -6,6 +6,8 @@
 #include "MainCharacter.h"
 #include "AIController.h"
 #include "Components/SceneComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Bullet.h"
 
 
 // Sets default values
@@ -24,10 +26,7 @@ void AFollowingDrone::BeginPlay()
 
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
 	AIController = Cast<AAIController>(GetController());
-
 	
-
-
 
 	FTimerHandle WaitHandle;
 	float WaitTime =0.2f; //시간을 설정하고
@@ -50,6 +49,7 @@ void AFollowingDrone::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+
 void AFollowingDrone::FollowPlayer()
 {
 	auto Drone = MainCharacter->DroneLocation;
@@ -66,4 +66,5 @@ else
 	SetActorLocation(DS);
 }
 }
+
 

@@ -13,6 +13,11 @@
 #include "Bullet.h"
 #include "WallSkill.h"
 #include "RangeSkill.h"
+#include "Teleport.h"
+#include "FollowingDrone.h"
+#include "GameFramework/Actor.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -24,19 +29,25 @@ AMainCharacter::AMainCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
 	CastFrom= CreateDefaultSubobject<USceneComponent>(TEXT("CASTFROM"));
 	DroneLocation= CreateDefaultSubobject<USceneComponent>(TEXT("DRONELOCATION"));
-	WallLocation= CreateDefaultSubobject<USceneComponent>(TEXT("WALLLOCATION"));
+	FireTornadoLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FIRETORNADOLOCATION"));
+	IceSkillLocation= CreateDefaultSubobject<USceneComponent>(TEXT("ICESKILLLOCATION"));
+	TeleportLocation = CreateDefaultSubobject<USceneComponent>(TEXT("TELEPORTLOCATION"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
 	CastFrom->SetupAttachment(GetCapsuleComponent());
 	DroneLocation->SetupAttachment(GetCapsuleComponent());
-	WallLocation->SetupAttachment(GetCapsuleComponent());
+	FireTornadoLocation->SetupAttachment(GetCapsuleComponent());
+	IceSkillLocation->SetupAttachment(GetCapsuleComponent());
+	TeleportLocation->SetupAttachment(GetCapsuleComponent());
 
 	SpringArm->TargetArmLength = 350.0f;
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
 	DroneLocation->SetRelativeLocation(FVector(5.0f, 140.0f, 45.0f));
-	WallLocation->SetRelativeLocation(FVector(1000.0f, 0.f,-88.0f));
+	FireTornadoLocation->SetRelativeLocation(FVector(1000.0f, 0.f,-88.0f));
+	IceSkillLocation->SetRelativeLocation(FVector(20.0f,0.0f,0.0f));
+	TeleportLocation->SetRelativeLocation(FVector(800.0f,0,-88.0f));
 
 	GetMesh()->SetRelativeLocationAndRotation(
 		FVector(0.f, 0.f, -88.f), FRotator(0.f, -90.f, 0.f));
@@ -91,6 +102,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Jump"),EInputEvent::IE_Pressed,this, &AMainCharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
+	PlayerInputComponent->BindAction(TEXT("IceSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::RangeSkill);
+	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
 }
 
 void AMainCharacter::UpDown(float Value)
@@ -145,24 +158,73 @@ void AMainCharacter::WallSkill()
 	}
 	
 	AnimInstance->PlayWallSkillMontage();
-	FVector SpawnLocation = WallLocation->GetComponentLocation();
+	FVector SpawnLocation = FireTornadoLocation->GetComponentLocation();
 	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
-	GetWorld()->SpawnActor<ARangeSkill>(SpawnLocation,SpawnRotation);
+	GetWorld()->SpawnActor<AWallSkill>(SpawnLocation,SpawnRotation);
 
 	IsSkillUsing= true;
 }
 
 void AMainCharacter::RangeSkill()
 {
+	if (IsSkillUsing)
+	{
+		return;
+	}
 
+	AnimInstance->PlayWallSkillMontage();
+	FVector SpawnLocation = IceSkillLocation->GetComponentLocation();
+	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+	GetWorld()->SpawnActor<ARangeSkill>(SpawnLocation, SpawnRotation);
+	IsSkillUsing = true;
+}
+
+void AMainCharacter::Teleport()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+
+	AnimInstance->PlayWallSkillMontage();
+	FVector TelpoLoc = TeleportLocation->GetComponentLocation();
+	FVector CurrentLocation= GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -88);
+
+	GetWorld()->SpawnActor<ATeleport>(TelpoLoc, FRotator(0, 0, 0));
+	GetWorld()->SpawnActor<ATeleport>(CurrentLocation, FRotator(0, 0, 0));
+	float WaitTime= 1.0f; //시간을 설정하고
+	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			SetActorLocation(TeleportLocation->GetComponentLocation());
+		}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+	IsSkillUsing = true;
 }
 
 void AMainCharacter::DroneAttack()
 {
-
-	FVector SpawnLocation = DroneLocation->GetComponentLocation();
-	FRotator SpawnRotation = DroneLocation->GetComponentRotation();
-	GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
+	float WaitTime=0.5f;
+	if (DroneIsAttacking==false)
+	{
+		DroneIsAttacking=true;
+		GetWorld()->GetTimerManager().SetTimer(WaitHandleDrone, FTimerDelegate::CreateLambda([&]()
+			{
+				FVector SpawnLocation = DroneLocation->GetComponentLocation();
+				FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+				GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
+			}), WaitTime, true); //반복도 여기서 추가 변수를 선언해 설정가능
+			return;
+	}
+	if (DroneIsAttacking==true)
+	{
+		DroneIsAttacking=false;
+		GetWorld()->GetTimerManager().SetTimer(WaitHandleDrone, FTimerDelegate::CreateLambda([&]()
+			{
+				FVector SpawnLocation = DroneLocation->GetComponentLocation();
+				FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+				GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
+			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+		return;
+	}
 }
 
 void AMainCharacter::AttackCheck()

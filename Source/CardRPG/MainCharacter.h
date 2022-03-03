@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "FollowingDrone.h"
 #include "MainCharacter.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
@@ -41,11 +42,14 @@ public:
 	void Attack();
 	void WallSkill();
 	void RangeSkill();
-	void DroneAttack();
+	void Teleport();
 	void AttackCheck();
+	void DroneAttack();
 
 
 	FOnAttackEnd OnAttackEnd;
+	FTimerHandle WaitHandle;
+	FTimerHandle WaitHandleDrone;
 
 	
 
@@ -64,9 +68,17 @@ public:
 		class USceneComponent* DroneLocation;
 
 	UPROPERTY(VisibleAnywhere)
-		class USceneComponent* WallLocation;
-	UPROPERTY()
+		class USceneComponent* FireTornadoLocation;
+
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* IceSkillLocation;
+
+	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* TeleportLocation;
+
+	UPROPERTY(VisibleAnywhere)
 		class AFollowingDrone* FollowingDrone;
+
 
 
 private:
@@ -95,5 +107,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool DontMove = false;
+
+		UPROPERTY()
+		bool DroneIsAttacking=false;
 
 };
