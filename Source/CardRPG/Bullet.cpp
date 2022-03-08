@@ -35,8 +35,6 @@ ABullet::ABullet()
 	ProjectileMovement->MaxSpeed = 5000.0f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
-
-
 	// Die after 3 seconds by default
 	InitialLifeSpan = 5.0f;
 

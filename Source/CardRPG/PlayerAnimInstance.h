@@ -25,6 +25,10 @@ public:
 		void PlayAttackMontage();
 
 		void PlayWallSkillMontage();
+		
+		void PlayDodgeMontage();
+		
+		void PlayRushSkillMontage();
 
 		void JumpToSection(int32 SectionIndex);
 
@@ -46,13 +50,37 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* WallSkillMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* DodgeMontage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* RushSkillMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float Horizontal;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float Vertical;
-
+	
+	UPROPERTY()
+	UAnimMontage* ADGF;
+	UPROPERTY()
+	UAnimMontage* ADGB;
+	UPROPERTY()
+	UAnimMontage* ADGL;
+	UPROPERTY()
+	UAnimMontage* ADGR;
+	UPROPERTY()
+	UAnimMontage* ADGLF;
+	UPROPERTY()
+	UAnimMontage* ADGRF;
+	UPROPERTY()
+	UAnimMontage* ADGLB;
+	UPROPERTY()
+	UAnimMontage* ADGRB;
 public:
 	FOnAttackHit OnAttackHit;
+private:
+    float RushSpeed=1500.0f;
 };

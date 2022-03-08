@@ -4,29 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RangeSkill.generated.h"
+#include "BlueRush.generated.h"
 
 UCLASS()
-class CARDRPG_API ARangeSkill : public AActor
+class CARDRPG_API ABlueRush : public AActor
 {
 	GENERATED_BODY()
-
-		UPROPERTY(VisibleDefaultsOnly, Category = RangeSkill)
-		class UBoxComponent* CollisionComp;
-public:
+	class UBoxComponent* CollisionComp;
+public:	
 	// Sets default values for this actor's properties
-	ARangeSkill();
+	ABlueRush();
 
 	UPROPERTY(VisibleAnywhere)
 		class UParticleSystemComponent* PSC;
-
-
+	
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
 
-
-	
-public:	
-	// Sets default values for this actor's properties
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,9 +27,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	float Speed=1500.0f;
 
-
-private:
-    UPROPERTY()
-    float Speed=1500.0f;
 };

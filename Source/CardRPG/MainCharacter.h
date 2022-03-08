@@ -39,8 +39,11 @@ public:
 	void UpDown(float Value);
 	void LeftRight(float Value);
 	void Yaw(float Value);
+	void Dodge();
 	void Attack();
+	void Rush();
 	void WallSkill();
+	void WallSkillOn();
 	void RangeSkill();
 	void Teleport();
 	void AttackCheck();
@@ -95,6 +98,15 @@ private:
 	UPROPERTY()
 		int32 AttackIndex = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UDecalComponent* CursorToWorld;
+		
+	UPROPERTY()
+	    class APlayerController* PC;
+
+	UPROPERTY()
+		FVector TelpoLoc;
+
 
 public:
 
@@ -105,10 +117,10 @@ public:
 	UPROPERTY()
 		float LeftRightValue = 0;
 
+
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool DontMove = false;
 
-		UPROPERTY()
-		bool DroneIsAttacking=false;
-
+	UPROPERTY()
+	bool DroneIsAttacking=false;
 };

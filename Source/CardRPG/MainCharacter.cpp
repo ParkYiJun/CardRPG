@@ -7,13 +7,16 @@
 #include"Components/CapsuleComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/DecalComponent.h"
 #include "DrawDebughelpers.h"
 #include "PlayerAnimInstance.h"
+#include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Bullet.h"
 #include "WallSkill.h"
 #include "RangeSkill.h"
 #include "Teleport.h"
+#include "YellowRushStart.h"
 #include "FollowingDrone.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -62,7 +65,18 @@ AMainCharacter::AMainCharacter()
 		GetMesh()->SetSkeletalMesh(SM.Object);
 	}
 
+	CursorToWorld = CreateDefaultSubobject<UDecalComponent>("CursorToWorld");
+	CursorToWorld->SetupAttachment(RootComponent);
+	static ConstructorHelpers::FObjectFinder<UMaterial> DecalMaterialAsset(TEXT("Material'/Game/BluePrints/M_Cursor_Decal.M_Cursor_Decal'"));
+	if (DecalMaterialAsset.Succeeded())
+	{
+		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
+	}
+	CursorToWorld->DecalSize = FVector(64.0f, 120.0f, 120.0f);
+	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 
+	// Activate ticking in order to update the cursor every frame.
+	PrimaryActorTick.bStartWithTickEnabled = true;
 }
 
 // Called when the game starts or when spawned
@@ -70,6 +84,9 @@ void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	PC = Cast<APlayerController>(GetController());
+    CursorToWorld->SetVisibility(false);
+    
 }
 
 void AMainCharacter::PostInitializeComponents()
@@ -89,6 +106,19 @@ void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CursorToWorld != nullptr)
+	{
+		if (PC)
+		{
+			FHitResult TraceHitResult;
+			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
+			FVector CursorFV = TraceHitResult.ImpactNormal;
+			FRotator CursorR = CursorFV.Rotation();
+			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
+			CursorToWorld->SetWorldRotation(CursorR);
+		}
+	}
+
 }
 
 // Called to bind functionality to input
@@ -100,8 +130,11 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AMainCharacter::Yaw);
 	PlayerInputComponent->BindAction(TEXT("Attack"),EInputEvent::IE_Pressed,this,&AMainCharacter::Attack);
 	PlayerInputComponent->BindAction(TEXT("Jump"),EInputEvent::IE_Pressed,this, &AMainCharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Dodge"),EInputEvent::IE_Pressed,  this, &AMainCharacter::Dodge);
+	PlayerInputComponent->BindAction(TEXT("Rush"),EInputEvent::IE_Pressed, this, &AMainCharacter::Rush);
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
+	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Released,this, &AMainCharacter::WallSkillOn);
 	PlayerInputComponent->BindAction(TEXT("IceSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::RangeSkill);
 	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
 }
@@ -131,9 +164,19 @@ void AMainCharacter::Yaw(float Value)
 	AddControllerYawInput(Value);
 }
 
+void AMainCharacter::Dodge()
+{
+	if ((IsAttacking == false) && (IsSkillUsing == false))
+	{
+	    AnimInstance->PlayDodgeMontage();
+	}
+	IsSkillUsing=true;
+
+}
+
 void AMainCharacter::Attack()
 {
-	if (IsAttacking)
+	if (IsAttacking || IsSkillUsing)
 	{
 		return;
 	}
@@ -156,13 +199,35 @@ void AMainCharacter::WallSkill()
 	{
 	return;
 	}
-	
-	AnimInstance->PlayWallSkillMontage();
-	FVector SpawnLocation = FireTornadoLocation->GetComponentLocation();
-	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
-	GetWorld()->SpawnActor<AWallSkill>(SpawnLocation,SpawnRotation);
-
-	IsSkillUsing= true;
+    CursorToWorld->SetVisibility(true);	
+    auto PlayerController = UGameplayStatics::GetPlayerController(this,0);
+    PlayerController->SetMouseLocation(600,300);
+}
+void AMainCharacter::WallSkillOn()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+		IsSkillUsing= true;
+    CursorToWorld->SetVisibility(false);
+	FVector WorldLocation;
+    FVector WorldDirection;
+	float DistanceAboveGround = 50;
+    auto PlayerController = UGameplayStatics::GetPlayerController(this,0);
+    PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+    
+    FVector PlaneOrigin(0.0f, 0.0f, DistanceAboveGround);
+    
+    FVector ActorWorldLocation = FMath::LinePlaneIntersection(
+    	WorldLocation,
+    	WorldLocation + WorldDirection,
+    	PlaneOrigin,
+    	FVector::UpVector);   		
+    FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+    
+    AnimInstance->PlayWallSkillMontage();
+    GetWorld()->SpawnActor<AWallSkill>(ActorWorldLocation, SpawnRotation);
 }
 
 void AMainCharacter::RangeSkill()
@@ -187,16 +252,16 @@ void AMainCharacter::Teleport()
 	}
 
 	AnimInstance->PlayWallSkillMontage();
-	FVector TelpoLoc = TeleportLocation->GetComponentLocation();
-	FVector CurrentLocation= GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -88);
+	TelpoLoc = TeleportLocation->GetComponentLocation();
+	FVector CurrentLoc= GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -88);
 
 	GetWorld()->SpawnActor<ATeleport>(TelpoLoc, FRotator(0, 0, 0));
-	GetWorld()->SpawnActor<ATeleport>(CurrentLocation, FRotator(0, 0, 0));
-	float WaitTime= 1.0f; //½Ã°£À» ¼³Á¤ÇÏ°í
+	GetWorld()->SpawnActor<ATeleport>(CurrentLoc, FRotator(0, 0, 0));
+	float WaitTime= 1.0f; //ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½
 	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
 		{
-			SetActorLocation(TeleportLocation->GetComponentLocation());
-		}), WaitTime, false); //¹Ýº¹µµ ¿©±â¼­ Ãß°¡ º¯¼ö¸¦ ¼±¾ðÇØ ¼³Á¤°¡´É
+			SetActorLocation(TelpoLoc +FVector(0,0,88));
+		}), WaitTime, false);
 	IsSkillUsing = true;
 }
 
@@ -211,7 +276,7 @@ void AMainCharacter::DroneAttack()
 				FVector SpawnLocation = DroneLocation->GetComponentLocation();
 				FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
 				GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
-			}), WaitTime, true); //¹Ýº¹µµ ¿©±â¼­ Ãß°¡ º¯¼ö¸¦ ¼±¾ðÇØ ¼³Á¤°¡´É
+			}), WaitTime, true); //ï¿½Ýºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			return;
 	}
 	if (DroneIsAttacking==true)
@@ -222,9 +287,23 @@ void AMainCharacter::DroneAttack()
 				FVector SpawnLocation = DroneLocation->GetComponentLocation();
 				FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
 				GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
-			}), WaitTime, false); //¹Ýº¹µµ ¿©±â¼­ Ãß°¡ º¯¼ö¸¦ ¼±¾ðÇØ ¼³Á¤°¡´É
+			}), WaitTime, false); //ï¿½Ýºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½â¼­ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		return;
 	}
+}
+void AMainCharacter::Rush()
+{
+    if (IsSkillUsing)
+	{
+		return;
+	}
+
+	AnimInstance->PlayRushSkillMontage();
+	FVector SpawnLocation = IceSkillLocation->GetComponentLocation();
+	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+	GetWorld()->SpawnActor<AYellowRushStart>(SpawnLocation, SpawnRotation);
+	IsSkillUsing = true;
+
 }
 
 void AMainCharacter::AttackCheck()
@@ -246,7 +325,7 @@ void AMainCharacter::AttackCheck()
 
 	FVector Vec = GetActorForwardVector() * AttackRange;
 	FVector Center = GetActorLocation() + Vec * 0.5f;
-	float HalfHegith = AttackRange * 0.5f + AttackRadius;
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
 	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
 	FColor DrawColor;
 	if (bResult)
@@ -254,7 +333,7 @@ void AMainCharacter::AttackCheck()
 	else
 		DrawColor = FColor::Red;
 
-	DrawDebugCapsule(GetWorld(), Center, HalfHegith, AttackRadius,
+	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
 		Rotation, DrawColor, false, 2.0f);
 
 	if (bResult && HitResult.Actor.IsValid())

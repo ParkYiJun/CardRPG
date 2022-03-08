@@ -3,6 +3,7 @@
 
 #include "RangeSkill.h"
 #include "Components/BoxComponent.h"
+#include "BlueRush.h"
 #include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
@@ -16,20 +17,25 @@ ARangeSkill::ARangeSkill()
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 	RootComponent = CollisionComp;
 
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Combat_Base/WeaponCombo/P_IB_OneShotAOE.P_IB_OneShotAOE'"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Skill_TeleCharge/P_Skill_Telecharge_Ice_Proj_03.P_Skill_Telecharge_Ice_Proj_03'"));
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
-
-	PSC->SetFloatParameter("ALphaScale", 0.5f);
-	InitialLifeSpan = 7.0f;
-
+	InitialLifeSpan = 1.0f;
+	
 }
 
 // Called when the game starts or when spawned
 void ARangeSkill::BeginPlay()
 {
 	Super::BeginPlay();
+	FTimerHandle WaitHandle;
+        float WaitTime=1.0f; //시간을 설정하고
+        GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+        	{
+        	    GetWorld()->SpawnActor<ABlueRush>(GetActorLocation(), FRotator(0,0,0));
+        	}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+
 	
 }
 
@@ -38,5 +44,10 @@ void ARangeSkill::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    FVector Location = GetActorLocation();
+       
+    Location +=GetActorForwardVector()*Speed*DeltaTime;
+    
+    SetActorLocation(Location);
 }
 

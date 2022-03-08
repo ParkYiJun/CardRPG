@@ -19,6 +19,31 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 	{
 		WallSkillMontage=WM.Object;
 	}
+	static ConstructorHelpers::FObjectFinder<UAnimMontage>RM(TEXT("AnimMontage'/Game/Animation/RushMontage.RushMontage'"));
+	if(RM.Succeeded())
+	{
+	    RushSkillMontage=RM.Object;
+	}
+	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGF(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_Forward_Montage.YinA_SW_Roll_Forward_Montage'"));
+	if(DGF.Succeeded()){ADGF=DGF.Object;}
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGB(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_Backward_Montage.YinA_SW_Roll_Backward_Montage'"));
+	if(DGB.Succeeded()){ADGB=DGB.Object;}
+	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGL(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_Left_Montage.YinA_SW_Roll_Left_Montage'"));
+	if(DGL.Succeeded()){ADGL=DGL.Object;}
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGR(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_Right_Montage.YinA_SW_Roll_Right_Montage'"));
+	if(DGR.Succeeded()){ADGR=DGR.Object;}
+	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGLB(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_BackwardLeft_Montage.YinA_SW_Roll_BackwardLeft_Montage'"));
+	if(DGLB.Succeeded()){ADGLB=DGLB.Object;}
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGRB(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_BackwardRight_Montage.YinA_SW_Roll_BackwardRight_Montage'"));
+	if(DGRB.Succeeded()){ADGRB=DGRB.Object;}
+	
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGLF(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_ForwardLeft_Montage.YinA_SW_Roll_ForwardLeft_Montage'"));
+	if(DGLF.Succeeded()){ADGLF=DGLF.Object;}
+	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGRF(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_ForwardRight_Montage.YinA_SW_Roll_ForwardRight_Montage'"));
+	if(DGRF.Succeeded()){ADGRF=DGRF.Object;}
 }
 
 void UPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -61,6 +86,55 @@ void UPlayerAnimInstance::PlayWallSkillMontage()
 	}
 
 }
+void UPlayerAnimInstance::PlayRushSkillMontage()
+{
+    if(!Montage_IsPlaying(RushSkillMontage))
+    {
+        Montage_Play(RushSkillMontage,1.0f);
+    }
+}
+
+void UPlayerAnimInstance::PlayDodgeMontage()
+{
+    if(Vertical==1 && Horizontal==0)
+    {
+        DodgeMontage= ADGF;
+    }
+    else if(Vertical ==-1 && Horizontal ==0)
+    {
+         DodgeMontage= ADGB;
+    }
+    else if(Vertical ==0 && Horizontal ==-1)
+    {
+        DodgeMontage= ADGL;
+    }
+    else if(Vertical ==0 && Horizontal ==1)
+    {
+        DodgeMontage= ADGR;
+    }
+    else if(Vertical ==1 && Horizontal ==-1)
+    {
+         DodgeMontage= ADGLF;
+    }
+    else if(Vertical ==1 && Horizontal ==1)
+    {
+        DodgeMontage= ADGRF;
+    }
+    else if(Vertical ==-1 && Horizontal ==-1)
+    {
+        DodgeMontage= ADGLB;
+    }
+    else if(Vertical ==-1 && Horizontal ==1)
+    {
+        DodgeMontage= ADGRB;
+    }
+    
+    if(!Montage_IsPlaying(DodgeMontage))
+    {
+        Montage_Play(DodgeMontage,1.2f);
+    }
+}
+
 
 void UPlayerAnimInstance::JumpToSection(int32 SectionIndex)
 {

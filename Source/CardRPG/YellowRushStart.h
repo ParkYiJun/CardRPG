@@ -4,18 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RangeSkill.generated.h"
+#include "YellowRushStart.generated.h"
 
 UCLASS()
-class CARDRPG_API ARangeSkill : public AActor
+class CARDRPG_API AYellowRushStart : public AActor
 {
 	GENERATED_BODY()
 
-		UPROPERTY(VisibleDefaultsOnly, Category = RangeSkill)
+		UPROPERTY(VisibleDefaultsOnly, Category = RushStart)
 		class UBoxComponent* CollisionComp;
-public:
+	
+public:	
 	// Sets default values for this actor's properties
-	ARangeSkill();
+	AYellowRushStart();
 
 	UPROPERTY(VisibleAnywhere)
 		class UParticleSystemComponent* PSC;
@@ -23,10 +24,6 @@ public:
 
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
 
-
-	
-public:	
-	// Sets default values for this actor's properties
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,8 +32,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+public:
+	UPROPERTY()
+		class AMainCharacter* MainCharacter;
+
 
 private:
-    UPROPERTY()
-    float Speed=1500.0f;
+	UPROPERTY()
+	float Speed = 1500.0f;
+
 };
