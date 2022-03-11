@@ -16,3 +16,16 @@ ACardRPGGameModeBase::ACardRPGGameModeBase()
 		DefaultPawnClass = BP_Char.Class;
 	}
 }
+
+int32 ACardRPGGameModeBase::FindCard(FName name) {
+	return CardNames.Find(name);
+}
+
+FName ACardRPGGameModeBase::CardAt(int32 idx) {
+	if (CardNames.IsValidIndex(idx)) {
+		return CardNames[idx];
+	}
+	else {
+		return FName::FName(TEXT("NONE"));
+	}
+}

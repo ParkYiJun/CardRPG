@@ -15,5 +15,13 @@ class CARDRPG_API ACardRPGGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 	ACardRPGGameModeBase();
-	
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Setting")
+		TArray<FName> CardNames;
+
+	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
+		int32 FindCard(FName name);
+	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
+		FName CardAt(int32 idx);
 };
