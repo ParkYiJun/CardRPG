@@ -46,12 +46,20 @@ public:
 	void WallSkillOn();
 	void RangeSkill();
 	void Teleport();
+	void Fast();
+	void Mine();
+	void ResetWalkSpeed();
 	void AttackCheck();
 	void DroneAttack();
+
+public:
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
 
 
 	FOnAttackEnd OnAttackEnd;
 	FTimerHandle WaitHandle;
+	FTimerHandle WaitHandleFast;
 	FTimerHandle WaitHandleDrone;
 
 	
@@ -80,7 +88,13 @@ public:
 		class USceneComponent* TeleportLocation;
 
 	UPROPERTY(VisibleAnywhere)
+		class USceneComponent* MovingSkillLocation;
+
+	UPROPERTY(VisibleAnywhere)
 		class AFollowingDrone* FollowingDrone;
+
+	UPROPERTY(VisibleAnywhere)
+		class UStatComponent* Stat;
 
 
 
@@ -106,6 +120,8 @@ private:
 
 	UPROPERTY()
 		FVector TelpoLoc;
+	UPROPERTY()
+		float WalkSpeed;
 
 
 public:
@@ -117,10 +133,21 @@ public:
 	UPROPERTY()
 		float LeftRightValue = 0;
 
+	UPROPERTY(VisibleAnywhere)
+		class UWidgetComponent* HpBar;
 
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool DontMove = false;
 
 	UPROPERTY()
 	bool DroneIsAttacking=false;
+
+
+
+private:
+	float Health = 0;
+	float DHealth = 100;
+
+
+
 };

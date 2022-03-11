@@ -8,6 +8,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/DecalComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "DrawDebughelpers.h"
 #include "PlayerAnimInstance.h"
 #include "GameFramework/PlayerController.h"
@@ -18,6 +19,11 @@
 #include "Teleport.h"
 #include "YellowRushStart.h"
 #include "FollowingDrone.h"
+#include "MovingSkill.h"
+#include "SpiderMine.h"
+#include "StatComponent.h"
+#include "MyUserWidget.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -35,6 +41,7 @@ AMainCharacter::AMainCharacter()
 	FireTornadoLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FIRETORNADOLOCATION"));
 	IceSkillLocation= CreateDefaultSubobject<USceneComponent>(TEXT("ICESKILLLOCATION"));
 	TeleportLocation = CreateDefaultSubobject<USceneComponent>(TEXT("TELEPORTLOCATION"));
+
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	Camera->SetupAttachment(SpringArm);
@@ -75,6 +82,22 @@ AMainCharacter::AMainCharacter()
 	CursorToWorld->DecalSize = FVector(64.0f, 120.0f, 120.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 
+
+
+	Stat = CreateDefaultSubobject<UStatComponent>(TEXT("STAT"));
+	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
+	HpBar->SetupAttachment(GetMesh());
+	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 200.0f));
+	HpBar->SetWidgetSpace(EWidgetSpace::Screen);
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_MyCharacterWidget.WBP_MyCharacterWidget_C'"));
+	if (UW.Succeeded())
+	{
+		HpBar->SetWidgetClass(UW.Class);
+		HpBar->SetDrawSize(FVector2D(200.0f, 50.0f));
+	}
+
+
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
@@ -96,9 +119,14 @@ void AMainCharacter::PostInitializeComponents()
 	if (AnimInstance)
 	{
 		AnimInstance->OnMontageEnded.AddDynamic(this, &AMainCharacter::OnAttackMontageEnded);
-		AnimInstance->OnAttackHit.AddUObject(this, &AMainCharacter::AttackCheck);
+		//AnimInstance->OnAttackHit.AddUObject(this, &AMainCharacter::AttackCheck);
 	}
 
+	HpBar->InitWidget();
+
+	auto HpWidget = Cast<UMyUserWidget>(HpBar->GetUserWidgetObject());
+	if (HpWidget)
+		HpWidget->BindHp(Stat);
 }
 
 // Called every frame
@@ -132,6 +160,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Jump"),EInputEvent::IE_Pressed,this, &AMainCharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Dodge"),EInputEvent::IE_Pressed,  this, &AMainCharacter::Dodge);
 	PlayerInputComponent->BindAction(TEXT("Rush"),EInputEvent::IE_Pressed, this, &AMainCharacter::Rush);
+	PlayerInputComponent->BindAction(TEXT("Fast"),EInputEvent::IE_Pressed,this, &AMainCharacter::Fast);
+	PlayerInputComponent->BindAction(TEXT("Mine"),EInputEvent::IE_Pressed,this, &AMainCharacter::Mine);
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Released,this, &AMainCharacter::WallSkillOn);
@@ -209,7 +239,7 @@ void AMainCharacter::WallSkillOn()
 	{
 		return;
 	}
-		IsSkillUsing= true;
+	IsSkillUsing= true;
     CursorToWorld->SetVisibility(false);
 	FVector WorldLocation;
     FVector WorldDirection;
@@ -265,6 +295,47 @@ void AMainCharacter::Teleport()
 	IsSkillUsing = true;
 }
 
+void AMainCharacter::Fast()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+	AnimInstance->PlayWallSkillMontage();
+	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0,0,-88);
+	GetWorld()->SpawnActor<AMovingSkill>(CurrentLoc,FRotator(0,0,0));
+	UCharacterMovementComponent* CM= GetCharacterMovement();
+	WalkSpeed = CM->MaxWalkSpeed;
+	CM->MaxWalkSpeed=WalkSpeed*2;
+
+
+	float WaitTime = 10.0f;
+	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			ResetWalkSpeed();
+		}), WaitTime, false);
+	IsSkillUsing = true;
+
+}
+
+void AMainCharacter::Mine()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+	AnimInstance->PlayWallSkillMontage();
+	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
+	GetWorld()->SpawnActor<ASpiderMine>(CurrentLoc, FRotator(0, 0, 0));
+	IsSkillUsing = true;
+}
+
+void AMainCharacter::ResetWalkSpeed()
+{
+	UCharacterMovementComponent* CM = GetCharacterMovement();
+	CM->MaxWalkSpeed = WalkSpeed;
+}
+
 void AMainCharacter::DroneAttack()
 {
 	float WaitTime=0.5f;
@@ -291,6 +362,7 @@ void AMainCharacter::DroneAttack()
 		return;
 	}
 }
+
 void AMainCharacter::Rush()
 {
     if (IsSkillUsing)
@@ -309,39 +381,19 @@ void AMainCharacter::Rush()
 void AMainCharacter::AttackCheck()
 {
 	FHitResult HitResult;
-	FCollisionQueryParams Params(NAME_None, false, this);
-
-	float AttackRange = 100.0f;
-	float AttackRadius = 50.0f;
-
-	bool bResult = GetWorld()->SweepSingleByChannel(
-		OUT HitResult,
-		GetActorLocation(),
-		GetActorLocation() + GetActorForwardVector() * AttackRange,
-		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
-		FCollisionShape::MakeSphere(AttackRadius),
-		Params);
-
-	FVector Vec = GetActorForwardVector() * AttackRange;
-	FVector Center = GetActorLocation() + Vec * 0.5f;
-	float HalfHeight = AttackRange * 0.5f + AttackRadius;
-	FQuat Rotation = FRotationMatrix::MakeFromZ(Vec).ToQuat();
-	FColor DrawColor;
-	if (bResult)
-		DrawColor = FColor::Green;
-	else
-		DrawColor = FColor::Red;
-
-	DrawDebugCapsule(GetWorld(), Center, HalfHeight, AttackRadius,
-		Rotation, DrawColor, false, 2.0f);
-
-	if (bResult && HitResult.Actor.IsValid())
+	if (HitResult.Actor.IsValid())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitResult.Actor->GetName());
 
 		FDamageEvent DamageEvent;
+		//HitResult.Actor->TakeDamage(Stat->GetAttack(), DamageEvent, GetController(), this);
 	}
+}
+
+float AMainCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Stat->OnAttacked(Damage);
+	return Damage;
 }
 
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)
