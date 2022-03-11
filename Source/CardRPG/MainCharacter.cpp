@@ -84,7 +84,7 @@ AMainCharacter::AMainCharacter()
 
 
 
-	//Stat = CreateDefaultSubobject<UStatComponent>(TEXT("STAT"));
+	Stat = CreateDefaultSubobject<UStatComponent>(TEXT("STAT"));
 	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
 	HpBar->SetupAttachment(GetMesh());
 	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 200.0f));
