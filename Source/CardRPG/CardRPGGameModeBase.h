@@ -17,8 +17,13 @@ class CARDRPG_API ACardRPGGameModeBase : public AGameModeBase
 	ACardRPGGameModeBase();
 
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Setting")
 		TArray<FName> CardNames;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UDataTable* CardDataTable;
 
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
 		int32 FindCard(FName name);
