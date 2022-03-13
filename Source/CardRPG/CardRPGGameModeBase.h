@@ -21,6 +21,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Setting")
 		TArray<FName> CardNames;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Setting")
+		FName SpecialCard;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UDataTable* CardDataTable;
@@ -28,5 +30,5 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
 		int32 FindCard(FName name);
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
-		FName CardAt(int32 idx);
+		FName CardAt(int32 idx, bool& Valid);
 };

@@ -47,11 +47,13 @@ int32 ACardRPGGameModeBase::FindCard(FName name) {
 	return CardNames.Find(name);
 }
 
-FName ACardRPGGameModeBase::CardAt(int32 idx) {
+FName ACardRPGGameModeBase::CardAt(int32 idx, bool& Valid) {
 	if (CardNames.IsValidIndex(idx)) {
+		Valid = true;
 		return CardNames[idx];
 	}
 	else {
-		return FName::FName(TEXT("NONE"));
+		Valid = false;
+		return SpecialCard;
 	}
 }
