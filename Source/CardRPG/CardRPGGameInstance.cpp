@@ -17,10 +17,7 @@ UCardRPGGameInstance::UCardRPGGameInstance()
 void UCardRPGGameInstance::Init()
 {
 	Super::Init();
-	UE_LOG(LogTemp, Warning, TEXT("MyGameInstance Attack %d"), GetStatData(1)->Attack);
-	UE_LOG(LogTemp, Warning, TEXT("MyGameInstance Health %d"), GetStatData(1)->MaxHp);
-	UE_LOG(LogTemp, Warning, TEXT("MyGameInstance Defence %d"), GetStatData(1)->Defence);
-
+	UE_LOG(LogTemp,Warning,TEXT("HP : %d"),GetStatData(2)->MaxHp);
 }
 
 FMyCharacterData* UCardRPGGameInstance::GetStatData(int32 Level)

@@ -56,6 +56,7 @@ private:
 	int32 RecoveryHp;
 	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 XpNeeded;
+
 public:
 	FOnHpChanged OnHpChanged;
 

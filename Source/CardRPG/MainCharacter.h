@@ -49,11 +49,10 @@ public:
 	void Fast();
 	void Mine();
 	void ResetWalkSpeed();
-	void AttackCheck();
 	void DroneAttack();
 
 public:
-	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
 
 
@@ -93,8 +92,8 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class AFollowingDrone* FollowingDrone;
 
-	UPROPERTY(VisibleAnywhere)
-		class UStatComponent* Stat;
+	UPROPERTY(EditDefaultsOnly)
+		class UStatComponent* Stats;
 
 
 

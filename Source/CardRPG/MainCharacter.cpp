@@ -9,7 +9,6 @@
 #include "Components/WidgetComponent.h"
 #include "Components/DecalComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "DrawDebughelpers.h"
 #include "PlayerAnimInstance.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -84,8 +83,9 @@ AMainCharacter::AMainCharacter()
 
 
 
-	Stat = CreateDefaultSubobject<UStatComponent>(TEXT("STAT"));
-	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
+	Stats = CreateDefaultSubobject<UStatComponent>(TEXT("STATS"));
+
+	/*HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
 	HpBar->SetupAttachment(GetMesh());
 	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 200.0f));
 	HpBar->SetWidgetSpace(EWidgetSpace::Screen);
@@ -96,7 +96,7 @@ AMainCharacter::AMainCharacter()
 		HpBar->SetWidgetClass(UW.Class);
 		HpBar->SetDrawSize(FVector2D(200.0f, 50.0f));
 	}
-
+	*/
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -122,11 +122,11 @@ void AMainCharacter::PostInitializeComponents()
 		//AnimInstance->OnAttackHit.AddUObject(this, &AMainCharacter::AttackCheck);
 	}
 
-	HpBar->InitWidget();
+	//HpBar->InitWidget();
 
-	auto HpWidget = Cast<UMyUserWidget>(HpBar->GetUserWidgetObject());
-	if (HpWidget)
-		HpWidget->BindHp(Stat);
+	//auto HpWidget = Cast<UMyUserWidget>(HpBar->GetUserWidgetObject());
+	//if (HpWidget)
+	//	HpWidget->BindHp(Stat);
 }
 
 // Called every frame
@@ -378,22 +378,11 @@ void AMainCharacter::Rush()
 
 }
 
-void AMainCharacter::AttackCheck()
-{
-	FHitResult HitResult;
-	if (HitResult.Actor.IsValid())
-	{
-		UE_LOG(LogTemp, Log, TEXT("Hit Actor: %s"), *HitResult.Actor->GetName());
 
-		FDamageEvent DamageEvent;
-		//HitResult.Actor->TakeDamage(Stat->GetAttack(), DamageEvent, GetController(), this);
-	}
-}
-
-float AMainCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	Stat->OnAttacked(Damage);
-	return Damage;
+	Stats->OnAttacked(DamageAmount);
+	return DamageAmount;
 }
 
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)

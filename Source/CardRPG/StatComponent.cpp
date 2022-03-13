@@ -62,7 +62,9 @@ void UStatComponent::SetHp(int32 NewHp)
 	if (Hp < 0)
 		Hp = 0;
 
-	//OnHpChanged.Broadcast();
+	
+
+	OnHpChanged.Broadcast();
 }
 
 void UStatComponent::OnAttacked(float DamageAmount)
