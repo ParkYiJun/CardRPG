@@ -90,7 +90,7 @@ void UPlayerAnimInstance::PlayRushSkillMontage()
 {
     if(!Montage_IsPlaying(RushSkillMontage))
     {
-        Montage_Play(RushSkillMontage,1.0f);
+        Montage_Play(RushSkillMontage,1.3f);
     }
 }
 
