@@ -77,14 +77,14 @@ void UStatComponent::OnAttacked(float DamageAmount)
 	UE_LOG(LogTemp, Warning, TEXT("onAttacked %d"), Hp);
 }
 
-void UStatComponent::SetXP(int32 DropXp)
-{
-	CurrentXp= CurrentXp+DropXp;
-	if (CurrentXp>=XpNeeded)
-	{
-		CurrentXp = CurrentXp - XpNeeded;
-		SetLevel(Level+1);
-	}
-
-}
-
+//void UStatComponent::SetXP(int32 DropXp)
+//{
+//	//CurrentXp= CurrentXp+DropXp;
+//	if (CurrentXp>=XpNeeded)
+//	{
+//		CurrentXp = CurrentXp - XpNeeded;
+//		SetLevel(Level+1);
+//	}
+//
+//}
+//

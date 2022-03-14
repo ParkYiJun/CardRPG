@@ -19,16 +19,16 @@ void UMyUserWidget::NativeConstruct() {
 void UMyUserWidget::BindHp(class UStatComponent* StatComp)
 {
 	CurrentStatComp = StatComp;
-	//StatComp->OnHpChanged.AddUObject(this, &UMyUserWidget::UpdateHP);
+	StatComp->OnHpChanged.AddUObject(this, &UMyUserWidget::UpdateHP);
 }
 
 void UMyUserWidget::UpdateHP()
-{UpdateGauge(0.8f);
+{
 	if (CurrentStatComp.IsValid())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UPDATEHP"));
 		
-		//PB_HpBar->SetPercent(CurrentStatComp->GetHpRatio());
+		UpdateGauge(CurrentStatComp->GetHpRatio());
 		UE_LOG(LogTemp, Warning, TEXT("RATIO: %f"), CurrentStatComp->GetHpRatio());
 	}
 }
