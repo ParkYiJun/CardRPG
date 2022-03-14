@@ -68,6 +68,16 @@ void UStatComponent::SetHp(int32 NewHp)
 	OnHpChanged.Broadcast();
 }
 
+void UStatComponent::HealHp(int32 HealAmount)
+{
+	Hp=Hp+HealAmount;
+	if (Hp>MaxHp)
+	{
+		Hp=MaxHp;
+	}
+	OnHpChanged.Broadcast();
+}
+
 void UStatComponent::OnAttacked(float DamageAmount)
 {
 	int32 NewHp = Hp - DamageAmount;
@@ -77,14 +87,15 @@ void UStatComponent::OnAttacked(float DamageAmount)
 	UE_LOG(LogTemp, Warning, TEXT("onAttacked %d"), Hp);
 }
 
-//void UStatComponent::SetXP(int32 DropXp)
-//{
-//	//CurrentXp= CurrentXp+DropXp;
-//	if (CurrentXp>=XpNeeded)
-//	{
-//		CurrentXp = CurrentXp - XpNeeded;
-//		SetLevel(Level+1);
-//	}
-//
-//}
-//
+void UStatComponent::SetXP(int32 DropXP)
+{
+	CurrentXp= CurrentXp+DropXP;
+	if (CurrentXp>=XpNeeded)
+	{
+		CurrentXp = CurrentXp - XpNeeded;
+		Level+=1;
+		SetLevel(Level);
+	}
+
+}
+
