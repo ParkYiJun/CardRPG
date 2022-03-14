@@ -14,14 +14,21 @@ void UMyUserWidget::NativeConstruct() {
 		gaugeWidth = GaugeSlot->GetSize().X;
 		UE_LOG(LogTemp, Warning, TEXT("Width: %f"), gaugeWidth);
 	}
-	
-	class AMainCharacter* player =	Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	if (player) {
-		CurrentStatComp = player->Stats;
-		CurrentStatComp->OnHpChanged.AddUObject(this, &UMyUserWidget::UpdateHP);
-	}
 
+	class APlayerController* P_Controller = GetOwningPlayer();
+	if (P_Controller) {
+		class AMainCharacter* player = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		if (player) {
+			BindHp(player->Stats);
+		}
+	}
 	UpdateHP();
+}
+
+void UMyUserWidget::BindHp(UStatComponent* StatComp)
+{
+	CurrentStatComp = StatComp;
+	CurrentStatComp->OnHpChanged.AddUObject(this, &UMyUserWidget::UpdateHP);
 }
 
 void UMyUserWidget::UpdateHP()
