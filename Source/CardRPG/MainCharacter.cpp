@@ -22,6 +22,7 @@
 #include "SpiderMine.h"
 #include "StatComponent.h"
 #include "MyUserWidget.h"
+#include "HealSkill.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -43,6 +44,7 @@ AMainCharacter::AMainCharacter()
 
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
+	SpringArm->bUsePawnControlRotation=true;
 	Camera->SetupAttachment(SpringArm);
 	CastFrom->SetupAttachment(GetCapsuleComponent());
 	DroneLocation->SetupAttachment(GetCapsuleComponent());
@@ -85,19 +87,6 @@ AMainCharacter::AMainCharacter()
 
 	Stats = CreateDefaultSubobject<UStatComponent>(TEXT("STATS"));
 
-	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
-	HpBar->SetupAttachment(GetMesh());
-	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 200.0f));
-	HpBar->SetWidgetSpace(EWidgetSpace::Screen);
-
-	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/Developers/ooo95/Collections/UserInterface/WBP_Hp.WBP_Hp_C'"));
-	if (UW.Succeeded())
-	{
-		HpBar->SetWidgetClass(UW.Class);
-		HpBar->SetDrawSize(FVector2D(200.0f, 50.0f));
-	}
-	
-
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bStartWithTickEnabled = true;
 }
@@ -122,11 +111,6 @@ void AMainCharacter::PostInitializeComponents()
 		//AnimInstance->OnAttackHit.AddUObject(this, &AMainCharacter::AttackCheck);
 	}
 
-	HpBar->InitWidget();
-
-	auto HpWidget = Cast<UMyUserWidget>(HpBar->GetUserWidgetObject());
-	if (HpWidget)
-		HpWidget->BindHp(Stats);
 }
 
 // Called every frame
@@ -156,12 +140,14 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &AMainCharacter::UpDown);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &AMainCharacter::LeftRight);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &AMainCharacter::Yaw);
+	PlayerInputComponent->BindAxis(TEXT("Lookup"),this, &AMainCharacter::LookUp);
 	PlayerInputComponent->BindAction(TEXT("Attack"),EInputEvent::IE_Pressed,this,&AMainCharacter::Attack);
 	PlayerInputComponent->BindAction(TEXT("Jump"),EInputEvent::IE_Pressed,this, &AMainCharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Dodge"),EInputEvent::IE_Pressed,  this, &AMainCharacter::Dodge);
 	PlayerInputComponent->BindAction(TEXT("Rush"),EInputEvent::IE_Pressed, this, &AMainCharacter::Rush);
 	PlayerInputComponent->BindAction(TEXT("Fast"),EInputEvent::IE_Pressed,this, &AMainCharacter::Fast);
 	PlayerInputComponent->BindAction(TEXT("Mine"),EInputEvent::IE_Pressed,this, &AMainCharacter::Mine);
+	PlayerInputComponent->BindAction(TEXT("Heal"),EInputEvent::IE_Pressed,this, &AMainCharacter::Heal);
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Released,this, &AMainCharacter::WallSkillOn);
@@ -192,6 +178,11 @@ void AMainCharacter::LeftRight(float Value)
 void AMainCharacter::Yaw(float Value)
 {
 	AddControllerYawInput(Value);
+}
+
+void AMainCharacter::LookUp(float Value)
+{
+	AddControllerPitchInput(Value);
 }
 
 void AMainCharacter::Dodge()
@@ -328,6 +319,20 @@ void AMainCharacter::Mine()
 	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
 	GetWorld()->SpawnActor<ASpiderMine>(CurrentLoc, FRotator(0, 0, 0));
 	IsSkillUsing = true;
+}
+
+void AMainCharacter::Heal()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+	AnimInstance->PlayWallSkillMontage();
+	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
+	GetWorld()->SpawnActor<AHealSkill>(CurrentLoc, FRotator(0, 0, 0));
+	Stats->HealHp(50);
+	IsSkillUsing = true;
+
 }
 
 void AMainCharacter::ResetWalkSpeed()

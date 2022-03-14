@@ -39,6 +39,7 @@ public:
 	void UpDown(float Value);
 	void LeftRight(float Value);
 	void Yaw(float Value);
+	void LookUp(float Value);
 	void Dodge();
 	void Attack();
 	void Rush();
@@ -48,6 +49,7 @@ public:
 	void Teleport();
 	void Fast();
 	void Mine();
+	void Heal();
 	void ResetWalkSpeed();
 	void DroneAttack();
 

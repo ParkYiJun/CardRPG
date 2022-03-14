@@ -27,8 +27,9 @@ public:
 
 	void SetLevel(int32 Level);
 	void SetHp(int32 NewHp);
+	void HealHp(int32 HealAmount);
 	void OnAttacked(float DamageAmount);
-	void SetXP(int32 DropXp);
+	void SetXP(int32 DropXP);
 
 
 	int32 GetLevel() { return Level; }
@@ -57,11 +58,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 RecoveryHp;
 	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
-	int32 DropXp;
-	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 XpNeeded;
 	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 CurrentXp=0;
+	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
+	int32 DropXp;
 
 public:
 	FOnHpChanged OnHpChanged;
