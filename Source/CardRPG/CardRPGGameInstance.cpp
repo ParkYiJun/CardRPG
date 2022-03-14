@@ -17,7 +17,6 @@ UCardRPGGameInstance::UCardRPGGameInstance()
 void UCardRPGGameInstance::Init()
 {
 	Super::Init();
-	UE_LOG(LogTemp,Warning,TEXT("HP : %d"),GetStatData(2)->MaxHp);
 }
 
 FMyCharacterData* UCardRPGGameInstance::GetStatData(int32 Level)

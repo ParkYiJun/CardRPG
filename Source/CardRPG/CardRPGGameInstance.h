@@ -15,22 +15,28 @@
  {
 	 GENERATED_BODY()
 
-	 UPROPERTY(EditAnywhere, BlueprintReadWrite)
+ public:
+	
+
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Data)
 	 int32 Level;
 
-	 UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	 int32 Attack;
 
-	 UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	 int32 MaxHp;
 
-	 UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	 int32 Defence;
 
-	 UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	 int32 RecoveryHp;
 
-	 UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
+	 int32 DropXp;
+
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Data)
 	 int32 XpNeeded;
  };
 

@@ -50,6 +50,7 @@ void UStatComponent::SetLevel(int32 NewLevel)
 			Attack = StatData->Attack;
 			Defence=StatData->Defence;
 			RecoveryHp= StatData->RecoveryHp;
+			DropXp= StatData->DropXp;
 			XpNeeded= StatData->XpNeeded;
 		}
 	}
@@ -74,5 +75,16 @@ void UStatComponent::OnAttacked(float DamageAmount)
 	SetHp(NewHp);
 
 	UE_LOG(LogTemp, Warning, TEXT("onAttacked %d"), Hp);
+}
+
+void UStatComponent::SetXP(int32 DropXp)
+{
+	CurrentXp= CurrentXp+DropXp;
+	if (CurrentXp>=XpNeeded)
+	{
+		CurrentXp = CurrentXp - XpNeeded;
+		SetLevel(Level+1);
+	}
+
 }
 
