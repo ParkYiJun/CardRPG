@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Image.h"
 #include "MyUserWidget.generated.h"
 
 /**
@@ -13,6 +14,8 @@ UCLASS()
 class CARDRPG_API UMyUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
+protected:
+	virtual void NativeConstruct() override;
 
 public:
 	void BindHp(class UStatComponent* StatComp);
@@ -21,8 +24,11 @@ public:
 
 private:
 	TWeakObjectPtr<class UStatComponent> CurrentStatComp;
-
-	UPROPERTY(meta = (BindWidget))
-		class UProgressBar* PB_HpBar;
+	float gaugeWidth = 0.0f;
+	class UCanvasPanelSlot* GaugeSlot;
 	
+	void UpdateGauge(float width);
+	
+	UPROPERTY(meta = (BindWidget))
+		class UImage* Gauge;
 };
