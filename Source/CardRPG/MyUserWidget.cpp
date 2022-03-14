@@ -5,6 +5,8 @@
 #include "StatComponent.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/ProgressBar.h"
+#include "Kismet/GameplayStatics.h"
+#include "MainCharacter.h"
 
 void UMyUserWidget::NativeConstruct() {
 	GaugeSlot = Cast<UCanvasPanelSlot>(Gauge->Slot);
@@ -13,13 +15,13 @@ void UMyUserWidget::NativeConstruct() {
 		UE_LOG(LogTemp, Warning, TEXT("Width: %f"), gaugeWidth);
 	}
 	
-	UpdateHP();
-}
+	class AMainCharacter* player =	Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (player) {
+		CurrentStatComp = player->Stats;
+		CurrentStatComp->OnHpChanged.AddUObject(this, &UMyUserWidget::UpdateHP);
+	}
 
-void UMyUserWidget::BindHp(class UStatComponent* StatComp)
-{
-	CurrentStatComp = StatComp;
-	StatComp->OnHpChanged.AddUObject(this, &UMyUserWidget::UpdateHP);
+	UpdateHP();
 }
 
 void UMyUserWidget::UpdateHP()
