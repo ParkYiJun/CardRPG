@@ -85,18 +85,18 @@ AMainCharacter::AMainCharacter()
 
 	Stats = CreateDefaultSubobject<UStatComponent>(TEXT("STATS"));
 
-	/*HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
+	HpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBAR"));
 	HpBar->SetupAttachment(GetMesh());
 	HpBar->SetRelativeLocation(FVector(0.f, 0.f, 200.0f));
 	HpBar->SetWidgetSpace(EWidgetSpace::Screen);
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/UI/WBP_MyCharacterWidget.WBP_MyCharacterWidget_C'"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> UW(TEXT("WidgetBlueprint'/Game/Developers/ooo95/Collections/UserInterface/WBP_Hp.WBP_Hp_C'"));
 	if (UW.Succeeded())
 	{
 		HpBar->SetWidgetClass(UW.Class);
 		HpBar->SetDrawSize(FVector2D(200.0f, 50.0f));
 	}
-	*/
+	
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bStartWithTickEnabled = true;
@@ -122,11 +122,11 @@ void AMainCharacter::PostInitializeComponents()
 		//AnimInstance->OnAttackHit.AddUObject(this, &AMainCharacter::AttackCheck);
 	}
 
-	//HpBar->InitWidget();
+	HpBar->InitWidget();
 
-	//auto HpWidget = Cast<UMyUserWidget>(HpBar->GetUserWidgetObject());
-	//if (HpWidget)
-	//	HpWidget->BindHp(Stat);
+	auto HpWidget = Cast<UMyUserWidget>(HpBar->GetUserWidgetObject());
+	if (HpWidget)
+		HpWidget->BindHp(Stats);
 }
 
 // Called every frame
