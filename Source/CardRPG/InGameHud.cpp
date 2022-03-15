@@ -5,6 +5,9 @@
 #include "GameFramework/HUD.h"
 #include "Blueprint/UserWidget.h"
 #include "MainUserWidget.h"
+#include "RockTempleWidget.h"
+#include "NestWidget.h"
+#include "DeadWidget.h"
 
 AInGameHud::AInGameHud()
 {
@@ -28,6 +31,30 @@ void AInGameHud::BeginPlay()
 			TownImageWidget->AddToViewport();
 		}
 	}
+	if (TempleImageWidgetClass)
+	{
+		TempleImageWidget = CreateWidget<URockTempleWidget>(GetWorld(),TempleImageWidgetClass);
+		if (TempleImageWidget)
+		{
+			TempleImageWidget->AddToViewport();
+		}
+	}
+	if (NestImageWidgetClass)
+	{
+		NestImageWidget = CreateWidget<UNestWidget>(GetWorld(), NestImageWidgetClass);
+		if (NestImageWidget)
+		{
+			NestImageWidget->AddToViewport();
+		}
+	}
+	if (DeadImageWidgetClass)
+	{
+		DeadImageWidget = CreateWidget<UDeadWidget>(GetWorld(), DeadImageWidgetClass);
+		if (DeadImageWidget)
+		{
+			DeadImageWidget->AddToViewport();
+		}
+	}
 }
 
 void AInGameHud::Tick(float DeltaSeconds)
@@ -35,7 +62,7 @@ void AInGameHud::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 }
 
-void AInGameHud::UpdateWidgetVisibility()
+void AInGameHud::UpdateWidgetVisibilityTown()
 {
 	if (TownImageWidget)
 	{
@@ -43,11 +70,64 @@ void AInGameHud::UpdateWidgetVisibility()
 	}
 }
 
-void AInGameHud::PlayAnimationByName()
+void AInGameHud::PlayAnimationByNameTown()
 {
 	if (TownImageWidget)
 	{
 		TownImageWidget->PlayAnimationByName();
+	}
+
+}
+
+void AInGameHud::UpdateWidgetVisibilityRockTemple()
+{
+	if (TempleImageWidget)
+	{
+		TempleImageWidget->UpdateWidgetVisibility();
+	}
+
+}
+
+void AInGameHud::PlayAnimationByNameRockTemple()
+{
+	if (TempleImageWidget)
+	{
+		TempleImageWidget->PlayAnimationByName();
+	}
+
+}
+
+void AInGameHud::UpdateWidgetVisibilityNest()
+{
+	if (NestImageWidget)
+	{
+		NestImageWidget->UpdateWidgetVisibility();
+	}
+
+}
+
+void AInGameHud::PlayAnimationByNameNest()
+{
+	if (NestImageWidget)
+	{
+		NestImageWidget->PlayAnimationByName();
+	}
+}
+
+void AInGameHud::UpdateWidgetVisibilityDead()
+{
+	if (DeadImageWidget)
+	{
+		DeadImageWidget->UpdateWidgetVisibility();
+	}
+
+}
+
+void AInGameHud::PlayAnimationByNameDead()
+{
+	if (DeadImageWidget)
+	{
+		DeadImageWidget->PlayAnimationByName();
 	}
 
 }

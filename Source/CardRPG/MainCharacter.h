@@ -128,8 +128,7 @@ private:
 	UPROPERTY()
 		float WalkSpeed;
 
-	UPROPERTY()
-		bool IsDead=false;
+
 
 
 public:
@@ -156,6 +155,16 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category= WidgetActive)
 	bool TownAnimationVisible=false;
+
+
+	UPROPERTY(VisibleAnywhere, Category = WidgetActive)
+		bool TempleAnimationVisible = false;
+
+	UPROPERTY(VisibleAnywhere, Category = WidgetActive)
+		bool NestAnimationVisible = false;
+
+	UPROPERTY()
+		bool IsDead = false;
 
 
 
