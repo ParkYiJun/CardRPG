@@ -22,6 +22,8 @@ public:
 
 	void UpdateHP();
 
+	void TownImageUpdate();
+
 private:
 	TWeakObjectPtr<class UStatComponent> CurrentStatComp;
 	float gaugeWidth = 0.0f;
@@ -31,4 +33,5 @@ private:
 	
 	UPROPERTY(meta = (BindWidget))
 		class UImage* Gauge;
+
 };

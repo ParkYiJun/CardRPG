@@ -147,14 +147,15 @@ public:
 	UPROPERTY()
 		float LeftRightValue = 0;
 
-	UPROPERTY(VisibleAnywhere)
-		class UWidgetComponent* HpBar;
 
 	UPROPERTY(VisibleAnywhere, Category = Pawn)
 		bool DontMove = false;
 
 	UPROPERTY()
 	bool DroneIsAttacking=false;
+
+	UPROPERTY(VisibleAnywhere, Category= WidgetActive)
+	bool TownAnimationVisible=false;
 
 
 
