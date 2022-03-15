@@ -23,6 +23,8 @@
 #include "StatComponent.h"
 #include "MyUserWidget.h"
 #include "HealSkill.h"
+#include "ShieldSkill.h"
+#include "CardDropActor.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -56,7 +58,7 @@ AMainCharacter::AMainCharacter()
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
 	DroneLocation->SetRelativeLocation(FVector(5.0f, 140.0f, 45.0f));
-	FireTornadoLocation->SetRelativeLocation(FVector(1000.0f, 0.f,-88.0f));
+	FireTornadoLocation->SetRelativeLocation(FVector(500.0f, 0.f,0.0f));
 	IceSkillLocation->SetRelativeLocation(FVector(20.0f,0.0f,0.0f));
 	TeleportLocation->SetRelativeLocation(FVector(800.0f,0,-88.0f));
 
@@ -108,7 +110,6 @@ void AMainCharacter::PostInitializeComponents()
 	if (AnimInstance)
 	{
 		AnimInstance->OnMontageEnded.AddDynamic(this, &AMainCharacter::OnAttackMontageEnded);
-		//AnimInstance->OnAttackHit.AddUObject(this, &AMainCharacter::AttackCheck);
 	}
 
 }
@@ -148,6 +149,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Fast"),EInputEvent::IE_Pressed,this, &AMainCharacter::Fast);
 	PlayerInputComponent->BindAction(TEXT("Mine"),EInputEvent::IE_Pressed,this, &AMainCharacter::Mine);
 	PlayerInputComponent->BindAction(TEXT("Heal"),EInputEvent::IE_Pressed,this, &AMainCharacter::Heal);
+	PlayerInputComponent->BindAction(TEXT("Shield"),EInputEvent::IE_Pressed,this, &AMainCharacter::Shield);
+	PlayerInputComponent->BindAction(TEXT("GetXp"),EInputEvent::IE_Pressed,this, &AMainCharacter::GenerateXp);
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Released,this, &AMainCharacter::WallSkillOn);
@@ -212,6 +215,20 @@ void AMainCharacter::Attack()
 	AttackIndex = (AttackIndex + 1) % 5;
 	IsAttacking = true;
 
+}
+
+void AMainCharacter::Rush()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+
+	AnimInstance->PlayRushSkillMontage();
+	FVector SpawnLocation = IceSkillLocation->GetComponentLocation();
+	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+	GetWorld()->SpawnActor<AYellowRushStart>(SpawnLocation, SpawnRotation);
+	IsSkillUsing = true;
 }
 
 void AMainCharacter::WallSkill()
@@ -335,6 +352,27 @@ void AMainCharacter::Heal()
 
 }
 
+void AMainCharacter::Shield()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+	AnimInstance->PlayWallSkillMontage();
+	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
+	GetWorld()->SpawnActor<AShieldSkill>(CurrentLoc, FRotator(0, 0, 0));
+	IsSkillUsing = true;
+
+
+}
+
+void AMainCharacter::GenerateXp()
+{
+	GetWorld()->SpawnActor<ACardDropActor>(FireTornadoLocation->GetComponentLocation(), FRotator(0, 0, 0));
+}
+
+
+
 void AMainCharacter::ResetWalkSpeed()
 {
 	UCharacterMovementComponent* CM = GetCharacterMovement();
@@ -368,25 +406,42 @@ void AMainCharacter::DroneAttack()
 	}
 }
 
-void AMainCharacter::Rush()
+void AMainCharacter::Dead()
 {
-    if (IsSkillUsing)
+	if (IsSkillUsing)
 	{
 		return;
 	}
-
-	AnimInstance->PlayRushSkillMontage();
-	FVector SpawnLocation = IceSkillLocation->GetComponentLocation();
-	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
-	GetWorld()->SpawnActor<AYellowRushStart>(SpawnLocation, SpawnRotation);
 	IsSkillUsing = true;
+	AnimInstance->PlayDeadMontage();
 
+	float WaitTime = 1.0;
+	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
+		{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			UE_LOG(LogTemp, Warning, TEXT("DEAD"));
+			GetCharacterMovement()->Deactivate();
+			GetMesh()->SetSimulatePhysics(true);
+			AnimInstance->StopSlotAnimation(0.1f, "DefaultSlot");
+			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		}), WaitTime, false);
 }
+
+
+
 
 
 float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	if (IsImmune==true)
+	{
+		return DamageAmount;
+	}
 	Stats->OnAttacked(DamageAmount);
+	if (Stats->GetHp()==0 && IsDead==false)
+	{
+		Dead();
+		IsDead=true;
+	}
 	return DamageAmount;
 }
 

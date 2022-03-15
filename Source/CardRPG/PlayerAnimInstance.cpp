@@ -24,7 +24,11 @@ UPlayerAnimInstance::UPlayerAnimInstance()
 	{
 	    RushSkillMontage=RM.Object;
 	}
-	
+		static ConstructorHelpers::FObjectFinder<UAnimMontage>DM(TEXT("AnimMontage'/Game/Animation/Phase_Dead_montage.Phase_Dead_montage'"));
+	if (DM.Succeeded())
+	{
+		DeadMontage = DM.Object;
+	}
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGF(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_Forward_Montage.YinA_SW_Roll_Forward_Montage'"));
 	if(DGF.Succeeded()){ADGF=DGF.Object;}
 	static ConstructorHelpers::FObjectFinder<UAnimMontage> DGB(TEXT("AnimMontage'/Game/Animation/Dodge/YinA_SW_Roll_Backward_Montage.YinA_SW_Roll_Backward_Montage'"));
@@ -92,6 +96,15 @@ void UPlayerAnimInstance::PlayRushSkillMontage()
     {
         Montage_Play(RushSkillMontage,1.3f);
     }
+}
+
+void UPlayerAnimInstance::PlayDeadMontage()
+{
+	if(!Montage_IsPlaying(DeadMontage))
+	{
+		Montage_Play(DeadMontage, 1.0f);
+	}
+
 }
 
 void UPlayerAnimInstance::PlayDodgeMontage()

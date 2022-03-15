@@ -30,6 +30,8 @@ public:
 		
 		void PlayRushSkillMontage();
 
+		void PlayDeadMontage();
+
 		void JumpToSection(int32 SectionIndex);
 
 		FName GetAttackMontageName(int32 SectionIndex);
@@ -56,6 +58,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	UAnimMontage* RushSkillMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
+	UAnimMontage* DeadMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	float Horizontal;

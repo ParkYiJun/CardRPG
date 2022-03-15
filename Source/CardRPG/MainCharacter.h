@@ -50,8 +50,11 @@ public:
 	void Fast();
 	void Mine();
 	void Heal();
+	void Shield();
+	void GenerateXp();
 	void ResetWalkSpeed();
 	void DroneAttack();
+	void Dead();
 
 public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -62,6 +65,7 @@ public:
 	FTimerHandle WaitHandle;
 	FTimerHandle WaitHandleFast;
 	FTimerHandle WaitHandleDrone;
+	FTimerHandle WaidHandleDead;
 
 	
 
@@ -123,6 +127,15 @@ private:
 		FVector TelpoLoc;
 	UPROPERTY()
 		float WalkSpeed;
+
+	UPROPERTY()
+		bool IsDead=false;
+
+
+public:
+	UPROPERTY()
+		bool IsImmune=false;
+
 
 
 public:
