@@ -24,7 +24,7 @@ ASpidering_AIController::ASpidering_AIController(FObjectInitializer const& objec
 	}
 	behavior_tree_component = object_initializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));
 	blackboard = object_initializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackboardComp"));
-
+	setup_perception_system();
 }
 
 void ASpidering_AIController::BeginPlay()

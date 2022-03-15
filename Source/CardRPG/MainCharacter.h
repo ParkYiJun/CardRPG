@@ -172,6 +172,12 @@ private:
 	float Health = 0;
 	float DHealth = 100;
 
+private:
+	void on_exit_game();
+
+	class UAIPerceptionStimuliSourceComponent* stimulus;
+
+	void setup_stimulus();
 
 
 };
