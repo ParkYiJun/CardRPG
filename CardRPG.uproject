@@ -13,11 +13,8 @@
 				"UMG",
 				"Slate",
 				"SlateCore",
-<<<<<<< HEAD
-				"UMGEditor"
-=======
+				"UMGEditor",
 				"AIModule"
->>>>>>> main
 			]
 		}
 	],
