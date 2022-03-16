@@ -23,13 +23,23 @@ public:
 	UPROPERTY()
 		class AMainCharacter* MainCharacter;
 
+	UPROPERTY()
+		class AActor* GetOtherActor;
+
 
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
 
 
 	UFUNCTION()
 		void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+		void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+private:
+	bool IsOverlapped=false;
+
+	FTimerHandle WaitHandle;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

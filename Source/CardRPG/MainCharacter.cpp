@@ -26,6 +26,7 @@
 #include "HealSkill.h"
 #include "ShieldSkill.h"
 #include "CardDropActor.h"
+#include "InGameHud.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -277,6 +278,7 @@ void AMainCharacter::Rush()
 
 void AMainCharacter::WallSkill()
 {
+	UE_LOG(LogTemp, Warning,TEXT("WALLSKILL"));
 	if (IsSkillUsing)
 	{
 	return;
@@ -287,6 +289,7 @@ void AMainCharacter::WallSkill()
 }
 void AMainCharacter::WallSkillOn()
 {
+	UE_LOG(LogTemp, Warning, TEXT("WALLSKILLON"));
 	if (IsSkillUsing)
 	{
 		return;
@@ -452,13 +455,11 @@ void AMainCharacter::DroneAttack()
 
 void AMainCharacter::Dead()
 {
-	if (IsSkillUsing)
-	{
-		return;
-	}
 	IsSkillUsing = true;
 	AnimInstance->PlayDeadMontage();
-
+	InGameHud = Cast<AInGameHud>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	InGameHud->UpdateWidgetVisibilityDead();
+	InGameHud->PlayAnimationByNameDead();
 	float WaitTime = 1.0;
 	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
 		{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -481,7 +482,8 @@ float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		return DamageAmount;
 	}
 	Stats->OnAttacked(DamageAmount);
-	if (Stats->GetHp()==0 && IsDead==false)
+	AnimInstance->PlayAttackedMontage();
+	if (Stats->GetHp()<=0 && IsDead==false)
 	{
 		Dead();
 		IsDead=true;
@@ -536,6 +538,11 @@ void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupt
 {
 	IsAttacking = false;
 	IsSkillUsing=false;
+	if (IsDead==true)
+	{
+		IsAttacking = true;
+		IsSkillUsing = true;
+	}
 
 	OnAttackEnd.Broadcast();
 }

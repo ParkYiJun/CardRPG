@@ -68,6 +68,7 @@ void UStatComponent::SetHp(int32 NewHp)
 
 void UStatComponent::HealHp(int32 HealAmount)
 {
+	UE_LOG(LogTemp,Warning,TEXT("Level: %d"), Level);
 	Hp=Hp+HealAmount;
 	if (Hp>MaxHp)
 	{
