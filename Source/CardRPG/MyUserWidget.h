@@ -18,11 +18,12 @@ protected:
 	virtual void NativeConstruct() override;
 
 public:
+	UPROPERTY(EditAnywhere, Category = "Target")
+		bool HP_XP;
 	void BindHp(class UStatComponent* StatComp);
-
+	void BindXp(class UStatComponent* StatComp);
 	void UpdateHP();
-
-	void TownImageUpdate();
+	void UpdateXP();
 
 private:
 	TWeakObjectPtr<class UStatComponent> CurrentStatComp;

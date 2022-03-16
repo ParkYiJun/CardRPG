@@ -15,20 +15,33 @@ void UMyUserWidget::NativeConstruct() {
 		UE_LOG(LogTemp, Warning, TEXT("Width: %f"), gaugeWidth);
 	}
 
+
 	class APlayerController* P_Controller = GetOwningPlayer();
 	if (P_Controller) {
 		class AMainCharacter* player = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		if (player) {
-			BindHp(player->Stats);
+			if (HP_XP)
+				BindHp(player->Stats);
+			else
+				BindXp(player->Stats);
 		}
 	}
-	UpdateHP();
+	if (HP_XP)
+		UpdateHP();
+	else
+		UpdateXP();
 }
 
 void UMyUserWidget::BindHp(UStatComponent* StatComp)
 {
 	CurrentStatComp = StatComp;
 	CurrentStatComp->OnHpChanged.AddUObject(this, &UMyUserWidget::UpdateHP);
+}
+
+void UMyUserWidget::BindXp(UStatComponent* StatComp)
+{
+	CurrentStatComp = StatComp;
+	CurrentStatComp->OnXpChanged.AddUObject(this, &UMyUserWidget::UpdateXP);
 }
 
 void UMyUserWidget::UpdateHP()
@@ -39,6 +52,16 @@ void UMyUserWidget::UpdateHP()
 		
 		UpdateGauge(CurrentStatComp->GetHpRatio());
 		UE_LOG(LogTemp, Warning, TEXT("RATIO: %f"), CurrentStatComp->GetHpRatio());
+	}
+}
+void UMyUserWidget::UpdateXP()
+{
+	if (CurrentStatComp.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UPDATEHP"));
+
+		UpdateGauge(CurrentStatComp->GetXPRatio());
+		UE_LOG(LogTemp, Warning, TEXT("RATIO: %f"), CurrentStatComp->GetXPRatio());
 	}
 }
 
