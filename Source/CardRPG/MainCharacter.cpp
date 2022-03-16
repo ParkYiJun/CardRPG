@@ -523,6 +523,8 @@ void AMainCharacter::OnInteract()
 	{
 		Interface->InteractWithMe();
 	}
+}
+
 void AMainCharacter::setup_stimulus()
 {
 	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("stimulus"));
