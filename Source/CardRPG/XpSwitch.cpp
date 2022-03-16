@@ -5,6 +5,7 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "CardDropActor.h"
 #include "Components/PointLightComponent.h"
 
 // Sets default values
@@ -32,7 +33,7 @@ AXpSwitch::AXpSwitch()
 void AXpSwitch::BeginPlay()
 {
 	Super::BeginPlay();
-	Light->SetIntensity(0);
+	Light->SetIntensity(10000);
 	InteractionWidget->SetVisibility(false);
 	
 }
@@ -51,6 +52,14 @@ void AXpSwitch::InteractWithMe()
 	{
 		Light->SetIntensity(0);
 		bIsOn=false;
+		FVector SpawnVector;
+		for (int a=10; a >= 0; a--)
+		{
+			SpawnVector.X = FMath::FRandRange(-500, 500);
+			SpawnVector.Y = FMath::FRandRange(-500, 500);
+			GetWorld()->SpawnActor<ACardDropActor>(RootComponent->GetComponentLocation() + SpawnVector, FRotator(0, 0, 0));
+		}
+		Destroy();
 	}
 	else
 	{

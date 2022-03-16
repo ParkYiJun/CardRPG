@@ -21,7 +21,7 @@ ACardDropActor::ACardDropActor()
 	RootComponent=CollisionComp;
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ACardDropActor::OnOverlapBegin);
 
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/Bullet/P_Fireball_Projectile.P_Fireball_Projectile'"));
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/Bullet/CardP_Fireball_Projectile.CardP_Fireball_Projectile'"));
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
@@ -49,7 +49,7 @@ void ACardDropActor::TimeLineProgress(float Value)
 
 void ACardDropActor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && (OtherActor != this) && OtherComp)
+	if (OtherActor==MainCharacter && (OtherActor != this) && OtherComp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GetXP!"));
 		MainCharacter->GetXP(15);
