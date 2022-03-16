@@ -11,6 +11,7 @@ void ATB_Dead::BeginPlay()
 	Super::BeginPlay();
 
 	InGameHud = Cast<AInGameHud>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 ATB_Dead::ATB_Dead()
@@ -20,11 +21,13 @@ ATB_Dead::ATB_Dead()
 
 void ATB_Dead::OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ON"));
-	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	UGameplayStatics::ApplyDamage(MainCharacter,500.0f,NULL,GetOwner(),NULL);
-	InGameHud->UpdateWidgetVisibilityDead();
-	InGameHud->PlayAnimationByNameDead();
+	if (OverlappedActor==MainCharacter)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ON"));
+		UGameplayStatics::ApplyDamage(MainCharacter, 500.0f, NULL, GetOwner(), NULL);
+		InGameHud->UpdateWidgetVisibilityDead();
+		InGameHud->PlayAnimationByNameDead();
+	}
 
 
 }

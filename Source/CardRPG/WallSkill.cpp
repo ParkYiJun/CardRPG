@@ -28,21 +28,41 @@ AWallSkill::AWallSkill()
 
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AWallSkill::OnOverlapBegin);
-
+	CollisionComp->OnComponentEndOverlap.AddDynamic(this,&AWallSkill::OnOverlapEnd);
 	UE_LOG(LogTemp, Warning, TEXT("Created!"));
 	InitialLifeSpan=7.0f;
 }
 
 void AWallSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	float Damage = MainCharacter->Stats->GetAttack();
-	FDamageEvent DamageEvent;
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ONHIT!"));
-		UGameplayStatics::ApplyDamage(OtherActor,Damage, NULL, GetOwner(),NULL);
+		GetOtherActor=OtherActor;
+		float WaitTime = 1.0f;
+		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				if (IsOverlapped == false)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("DotF"));
+					UGameplayStatics::ApplyDamage(GetOtherActor, 10, NULL, GetOwner(), NULL);
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("DotT"));
+					UGameplayStatics::ApplyDamage(GetOtherActor, 10, NULL, GetOwner(), NULL);
+
+				}
+
+
+			}), WaitTime, true);
 	}
 
+}
+
+
+void AWallSkill::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	GetWorldTimerManager().ClearTimer(WaitHandle);
 }
 
 // Called when the game starts or when spawned

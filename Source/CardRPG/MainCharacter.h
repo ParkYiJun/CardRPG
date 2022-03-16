@@ -139,6 +139,9 @@ private:
 	UPROPERTY()
 		float WalkSpeed;
 
+	UPROPERTY()
+		class AInGameHud* InGameHud;
+
 
 
 
