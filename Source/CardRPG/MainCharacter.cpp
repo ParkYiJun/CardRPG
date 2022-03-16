@@ -5,6 +5,7 @@
 #include"GameFramework/SpringArmComponent.h"
 #include"Camera/CameraComponent.h"
 #include"Components/CapsuleComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/DecalComponent.h"
@@ -29,6 +30,7 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "InteractionInterface.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -43,7 +45,7 @@ AMainCharacter::AMainCharacter()
 	FireTornadoLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FIRETORNADOLOCATION"));
 	IceSkillLocation= CreateDefaultSubobject<USceneComponent>(TEXT("ICESKILLLOCATION"));
 	TeleportLocation = CreateDefaultSubobject<USceneComponent>(TEXT("TELEPORTLOCATION"));
-
+	InteractionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("InteraactionBox"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	SpringArm->bUsePawnControlRotation=true;
@@ -53,6 +55,7 @@ AMainCharacter::AMainCharacter()
 	FireTornadoLocation->SetupAttachment(GetCapsuleComponent());
 	IceSkillLocation->SetupAttachment(GetCapsuleComponent());
 	TeleportLocation->SetupAttachment(GetCapsuleComponent());
+	InteractionBox->SetupAttachment(RootComponent);
 
 	SpringArm->TargetArmLength = 350.0f;
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
@@ -100,7 +103,8 @@ void AMainCharacter::BeginPlay()
 	
 	PC = Cast<APlayerController>(GetController());
     CursorToWorld->SetVisibility(false);
-    
+	//InteractionBox->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnBoxBeginOverlap);
+	//InteractionBox->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnBoxEndOverlap);
 }
 
 void AMainCharacter::PostInitializeComponents()
@@ -132,6 +136,40 @@ void AMainCharacter::Tick(float DeltaTime)
 		}
 	}
 
+	TArray<AActor*>OverlappingActors;
+	InteractionBox->GetOverlappingActors(OverlappingActors);
+
+	if (OverlappingActors.Num()==0)
+	{
+		if (Interface)
+		{
+			Interface->HideInteractionWidget();
+			Interface=nullptr;
+		}
+		return;
+	}
+
+	AActor* CloestActor = OverlappingActors[0];
+
+	for (auto CurrentActor:OverlappingActors)
+	{
+		if (GetDistanceTo(CurrentActor)<GetDistanceTo(CloestActor))
+		{
+			CloestActor=CurrentActor;
+		}
+	}
+
+	if (Interface)
+	{
+		Interface->HideInteractionWidget();
+	}
+
+	Interface= Cast<IInteractionInterface>(CloestActor);
+
+	if (Interface)
+	{
+		Interface->ShowInteractionWidget();
+	}
 }
 
 // Called to bind functionality to input
@@ -156,6 +194,8 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Released,this, &AMainCharacter::WallSkillOn);
 	PlayerInputComponent->BindAction(TEXT("IceSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::RangeSkill);
 	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
+	//Interact Key
+	PlayerInputComponent->BindAction(TEXT("Interact"),EInputEvent::IE_Pressed,this, &AMainCharacter::OnInteract);
 }
 
 void AMainCharacter::UpDown(float Value)
@@ -443,6 +483,42 @@ float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		IsDead=true;
 	}
 	return DamageAmount;
+}
+
+float AMainCharacter::GetXP(float XpAmount)
+{
+	Stats->SetXP(XpAmount);
+	return XpAmount;
+}
+
+/*void AMainCharacter::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	Interface=Cast<IInteractionInterface>(OtherActor);
+
+	if (Interface)
+	{
+		Interface->ShowInteractionWidget();
+	}
+}
+
+void AMainCharacter::OnBoxEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+
+	if (Interface)
+	{
+		Interface->HideInteractionWidget();
+		Interface=nullptr;
+	}
+
+}
+*/
+
+void AMainCharacter::OnInteract()
+{
+	if (Interface)
+	{
+		Interface->InteractWithMe();
+	}
 }
 
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)

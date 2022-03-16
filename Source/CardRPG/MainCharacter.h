@@ -55,11 +55,12 @@ public:
 	void ResetWalkSpeed();
 	void DroneAttack();
 	void Dead();
+	void OnInteract();
 
 public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
-
+	float GetXP(float XpAmount);
 
 	FOnAttackEnd OnAttackEnd;
 	FTimerHandle WaitHandle;
@@ -101,7 +102,17 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		class UStatComponent* Stats;
 
+private:
+	UPROPERTY(EditAnywhere)
+		class UBoxComponent* InteractionBox;
 
+	class IInteractionInterface* Interface = nullptr;
+
+	//UFUNCTION()
+	//void OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	//UFUNCTION()
+	//void OnBoxEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
 

@@ -6,6 +6,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TimelineComponent.h"
+#include "StatComponent.h"
 #include "MainCharacter.h"
 
 // Sets default values
@@ -18,6 +19,7 @@ ACardDropActor::ACardDropActor()
 	CollisionComp->InitSphereRadius(5.0f);
 	CollisionComp->BodyInstance.SetCollisionProfileName("Projectile");
 	RootComponent=CollisionComp;
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ACardDropActor::OnOverlapBegin);
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/Bullet/P_Fireball_Projectile.P_Fireball_Projectile'"));
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
@@ -27,7 +29,7 @@ ACardDropActor::ACardDropActor()
 	SecCollisionComp = CreateDefaultSubobject<USphereComponent>(TEXT("GetRange"));
 	SecCollisionComp->SetupAttachment(CollisionComp);
 	SecCollisionComp->SetRelativeScale3D(FVector(5.0f,5,5));
-	SecCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ACardDropActor::OnOverlapBegin);
+	
 
 	static ConstructorHelpers::FObjectFinder<UCurveFloat> Curve(TEXT("CurveFloat'/Game/BluePrints/CurveFloat.CurveFloat'"));
 	check(Curve.Succeeded());
@@ -47,12 +49,17 @@ void ACardDropActor::TimeLineProgress(float Value)
 
 void ACardDropActor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GetXP!"));
+		MainCharacter->GetXP(15);
+		Destroy();
+	}
 }
 
 // Called when the game starts or when spawned
 void ACardDropActor::BeginPlay()
 {
-	UE_LOG(LogTemp, Warning, TEXT("On"));
 	Super::BeginPlay();
 	if (CurveFloat)
 	{
