@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CombatInterface.h"
+#include "Animation/AnimMontage.h"
 #include "Spidering.generated.h"
 
 UCLASS()
-class CARDRPG_API ASpidering : public ACharacter
+class CARDRPG_API ASpidering : public ACharacter, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -25,5 +27,16 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	/*/UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Combat")
+	int melee_attack();*/
+
+	int melee_attack_Implementation() override;
+
+	UAnimMontage* get_montage() const;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* montage;
 
 };
