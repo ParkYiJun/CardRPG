@@ -5,7 +5,10 @@
 #include "MainCharacter.h"
 #include "Engine/DataTable.h"
 #include "Internationalization/Text.h"
+#include "Blueprint/UserWidget.h"
 #include "CardRPGStructure.h"
+#include "MainPlayerController.h"
+#include "PlayerCardState.h"
 
 ACardRPGGameModeBase::ACardRPGGameModeBase()
 {
@@ -25,6 +28,24 @@ ACardRPGGameModeBase::ACardRPGGameModeBase()
 		CardDataTable = DTCPP_Card.Object;
 	}
 	
+	PlayerControllerClass = AMainPlayerController::StaticClass();
+	PlayerStateClass = APlayerCardState::StaticClass();
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> main(TEXT("/Game/UI/UI"));
+	if (main.Succeeded()) {
+		MainUI = main.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> lobby(TEXT("/Game/UI/Lobby"));
+	if (lobby.Succeeded()) {
+		LobbyUI = lobby.Class;
+	}
+
+	//static ConstructorHelpers::FClassFinder<UUserWidget> title(TEXT("/Game/UI/Title"));
+	//if (title.Succeeded()) {
+	//	TitleUI = title.Class;
+	//}
+	
 }
 
 void ACardRPGGameModeBase::BeginPlay() {
@@ -40,6 +61,8 @@ void ACardRPGGameModeBase::BeginPlay() {
 			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, msg.ToString());
 		
 	}
+
+	ChangeMenuWidget(MainUI);
 }
 
 
@@ -47,13 +70,24 @@ int32 ACardRPGGameModeBase::FindCard(FName name) {
 	return CardNames.Find(name);
 }
 
-FName ACardRPGGameModeBase::CardAt(int32 idx, bool& Valid) {
+FName ACardRPGGameModeBase::CardAt(int32 idx) {
 	if (CardNames.IsValidIndex(idx)) {
-		Valid = true;
 		return CardNames[idx];
 	}
 	else {
-		Valid = false;
 		return SpecialCard;
+	}
+}
+
+void ACardRPGGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass) {
+	if (CurUI != nullptr) {
+		CurUI->RemoveFromViewport();
+		CurUI = nullptr;
+	}
+	else {
+		CurUI = CreateWidget(GetWorld(), NewWidgetClass);
+		if (CurUI != nullptr) {
+			CurUI->AddToViewport();
+		}
 	}
 }
