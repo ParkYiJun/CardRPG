@@ -16,6 +16,8 @@ class CARDRPG_API ACardRPGGameModeBase : public AGameModeBase
 
 	ACardRPGGameModeBase();
 
+	UPROPERTY()
+		UUserWidget* CurUI;
 protected:
 	virtual void BeginPlay() override;
 
@@ -26,9 +28,19 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UDataTable* CardDataTable;
-
+public:
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
 		int32 FindCard(FName name);
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
-		FName CardAt(int32 idx, bool& Valid);
+		FName CardAt(int32 idx);
+	UFUNCTION()
+		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<UUserWidget> TitleUI;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<UUserWidget> LobbyUI;
+	UPROPERTY(EditAnywhere, Category = "Widget")
+		TSubclassOf<UUserWidget> MainUI;
+
+	FORCEINLINE int32 GetCardsNum() { return this->CardNames.Num(); }
 };

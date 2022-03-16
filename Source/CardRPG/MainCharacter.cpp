@@ -31,6 +31,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "InteractionInterface.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -94,6 +96,8 @@ AMainCharacter::AMainCharacter()
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bStartWithTickEnabled = true;
+
+	setup_stimulus();
 }
 
 // Called when the game starts or when spawned
@@ -519,6 +523,11 @@ void AMainCharacter::OnInteract()
 	{
 		Interface->InteractWithMe();
 	}
+void AMainCharacter::setup_stimulus()
+{
+	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("stimulus"));
+	stimulus->RegisterForSense(TSubclassOf < UAISense_Sight>());
+	stimulus->RegisterWithPerceptionSystem();
 }
 
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)
