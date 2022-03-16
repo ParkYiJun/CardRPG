@@ -94,6 +94,6 @@ void UStatComponent::SetXP(int32 DropXP)
 		Level+=1;
 		SetLevel(Level);
 	}
-
+	OnXpChanged.Broadcast();
 }
 

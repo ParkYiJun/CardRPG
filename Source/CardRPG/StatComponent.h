@@ -7,6 +7,7 @@
 #include "StatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnHpChanged);
+DECLARE_MULTICAST_DELEGATE(FOnXpChanged);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CARDRPG_API UStatComponent : public UActorComponent
@@ -40,6 +41,8 @@ public:
 
 	float GetHpRatio() { return Hp / (float)MaxHp; }
 
+	float GetXPRatio() { return CurrentXp / (float)XpNeeded; }
+
 	int32 GetAttack() { return Attack; }
 
 
@@ -66,5 +69,6 @@ private:
 
 public:
 	FOnHpChanged OnHpChanged;
+	FOnHpChanged OnXpChanged;
 
 };
