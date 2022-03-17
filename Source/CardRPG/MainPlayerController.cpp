@@ -4,6 +4,7 @@
 #include "MainPlayerController.h"
 #include "GameFramework/Controller.h"
 #include "Math/UnrealMathUtility.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "CardRPGGameModeBase.h"
 
@@ -33,6 +34,16 @@ void AMainPlayerController::Tick(float DeltaSeconds)
 	else {
 		if (!isDraw) isDraw = true;
 	}
+
+	if (WasInputKeyJustPressed(EKeys::Z)) {
+		UUserWidget* Popup =  CreateWidget(this, CardGetEvent_UI);
+		if (Popup != nullptr) {
+			SetPause(true);
+			SetShowMouseCursor(true);
+			
+			Popup->AddToViewport(0);
+		}
+	}
 }
 
 void AMainPlayerController::SetupInputComponent()
@@ -56,7 +67,9 @@ void AMainPlayerController::UsingCardSkill_R() {
 
 void AMainPlayerController::OpeningCardList() {
 	bShowCardList = !bShowCardList;
+	SetShowMouseCursor(bShowCardList);
 	if (!bShowCardList) bShowDetail = false;
+	
 }
 
 void AMainPlayerController::ClosingPopups() {

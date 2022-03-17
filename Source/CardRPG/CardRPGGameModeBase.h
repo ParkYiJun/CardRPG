@@ -43,4 +43,5 @@ public:
 		TSubclassOf<UUserWidget> MainUI;
 
 	FORCEINLINE int32 GetCardsNum() { return this->CardNames.Num(); }
+	FORCEINLINE void GotoMainLevel() { ChangeMenuWidget(MainUI); }
 };
