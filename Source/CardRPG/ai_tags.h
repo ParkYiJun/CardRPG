@@ -4,5 +4,5 @@
 #include "Runtime/Core/Public/Containers/UnrealString.h"
 namespace tags
 {
-	TCHAR const* const noise_tag = TEXT("Noise");
+	TCHAR const * const noise_tag = TEXT("Noise");
 }

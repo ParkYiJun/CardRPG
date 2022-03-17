@@ -18,6 +18,6 @@ public:
 	void OnBecomeRelevant(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = AI, meta = (AllowPrivateAccess = "true"))
-	float melee_range = 25.0f;
+	float melee_range = 500.0f;
 	
 };

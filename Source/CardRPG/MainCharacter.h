@@ -192,6 +192,7 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	USoundBase* distraction_sound;
+	
 	void on_exit_game();
 
 	class UAIPerceptionStimuliSourceComponent* stimulus;

@@ -207,6 +207,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
 	//Interact Key
 	PlayerInputComponent->BindAction(TEXT("Interact"),EInputEvent::IE_Pressed,this, &AMainCharacter::OnInteract);
+	PlayerInputComponent->BindAction(TEXT("Distract"), IE_Pressed, this, &AMainCharacter::on_distract);
 }
 
 void AMainCharacter::UpDown(float Value)
