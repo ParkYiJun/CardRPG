@@ -57,19 +57,24 @@ void AYellowRushStart::Tick(float DeltaTime)
 	Location += GetActorForwardVector() * Speed * DeltaTime;
 	//CharacterLocation+=MainCharacter->GetActorForwardVector()*Speed*DeltaTime;
 
-	SetActorLocation(Location);
-	MainCharacter->SetActorLocation(Location);
-	MainCharacter->SetActorRotation(Rotation);
+	if (IsOverlap !=true)
+	{
+		SetActorLocation(Location);
+		MainCharacter->SetActorLocation(Location);
+		MainCharacter->SetActorRotation(Rotation);
+	}
 }
 
 void AYellowRushStart::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	float Damage = MainCharacter->Stats->GetAttack();
 	FDamageEvent DamageEvent;
-	if (OtherActor && (OtherActor != this) && OtherComp)
+	if (OtherActor!=MainCharacter && OtherActor && (OtherActor != this) && OtherComp)
 	{
+		IsOverlap = true;
 		UE_LOG(LogTemp, Warning, TEXT("ONHIT!"));
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, NULL, GetOwner(), NULL);
+		
 	}
 
 }

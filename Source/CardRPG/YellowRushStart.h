@@ -44,4 +44,7 @@ private:
 	UPROPERTY()
 	float Speed = 1500.0f;
 
+	UPROPERTY()
+	bool IsOverlap = false;
+
 };
