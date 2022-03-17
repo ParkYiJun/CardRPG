@@ -42,6 +42,8 @@ public:
 	void LookUp(float Value);
 	void Dodge();
 	void Attack();
+	void UseSkill();
+	void UseSkill_R();
 	void Rush();
 	void WallSkill();
 	void WallSkillOn();
@@ -68,7 +70,7 @@ public:
 	FTimerHandle WaitHandleDrone;
 	FTimerHandle WaidHandleDead;
 
-	
+	int32 SkillCode;
 
 
 private:

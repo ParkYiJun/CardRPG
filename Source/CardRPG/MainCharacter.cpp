@@ -271,6 +271,53 @@ void AMainCharacter::Attack()
 
 }
 
+void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
+	switch (SkillCode) {
+	case 101:
+		WallSkill();
+		break;
+	case 102:
+		Rush(); //Yellow Rush
+		break;
+	case 103:
+		Fast();
+		break;
+	case 104:
+		Mine();
+		break;
+	case 105:
+		Heal();
+		break;
+	case 106:
+		Shield();
+		break;
+	case 107:
+		RangeSkill();
+		break;
+	case 108:
+		Teleport();
+		break;
+	case 109: //ice_explosion
+		break;
+	case 110: //Blue Rush
+		break;
+	default:
+		break;
+	}
+}
+
+void AMainCharacter::UseSkill_R() { //Binding Q Key Released
+	switch (SkillCode)
+	{
+	case 101:
+		WallSkillOn();
+		break;
+	default:
+		break;
+	}
+}
+
+#pragma region Q Skills
 void AMainCharacter::Rush()
 {
 	if (IsSkillUsing)
@@ -434,6 +481,8 @@ void AMainCharacter::Shield()
 
 
 }
+
+#pragma endregion
 
 void AMainCharacter::GenerateXp()
 {
