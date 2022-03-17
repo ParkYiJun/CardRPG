@@ -27,6 +27,7 @@
 #include "ShieldSkill.h"
 #include "CardDropActor.h"
 #include "InGameHud.h"
+#include "HardAttackSkill.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -88,7 +89,7 @@ AMainCharacter::AMainCharacter()
 	{
 		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
 	}
-	CursorToWorld->DecalSize = FVector(64.0f, 120.0f, 120.0f);
+	CursorToWorld->DecalSize = FVector(64.0f, 130.0f, 120.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 
 
@@ -105,6 +106,7 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	
 	PC = Cast<APlayerController>(GetController());
     CursorToWorld->SetVisibility(false);
@@ -253,11 +255,18 @@ void AMainCharacter::Attack()
 
 	FVector SpawnLocation= CastFrom->GetComponentLocation();
 	FRotator SpawnRotation=GetCapsuleComponent()->GetComponentRotation();
-	GetWorld()->SpawnActor<ABullet>(SpawnLocation,SpawnRotation);
+	if (AttackIndex<5)
+	{
+		GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
+	}
+	else
+	{
+		GetWorld()->SpawnActor<AHardAttackSkill>(SpawnLocation,SpawnRotation);
+	}
 
 	AnimInstance->JumpToSection(AttackIndex);
 
-	AttackIndex = (AttackIndex + 1) % 5;
+	AttackIndex = (AttackIndex + 1) % 6;
 	IsAttacking = true;
 
 }
@@ -289,6 +298,15 @@ void AMainCharacter::WallSkill()
 }
 void AMainCharacter::WallSkillOn()
 {
+
+/*
+			FHitResult TraceHitResult;
+			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
+			FVector CursorFV = TraceHitResult.ImpactNormal;
+			FRotator CursorR = CursorFV.Rotation();
+			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
+			CursorToWorld->SetWorldRotation(CursorR);
+*/
 	UE_LOG(LogTemp, Warning, TEXT("WALLSKILLON"));
 	if (IsSkillUsing)
 	{
@@ -298,10 +316,12 @@ void AMainCharacter::WallSkillOn()
     CursorToWorld->SetVisibility(false);
 	FVector WorldLocation;
     FVector WorldDirection;
-	float DistanceAboveGround = 50;
+	float DistanceAboveGround = CursorToWorld->GetComponentLocation().Z;
+	//float DistanceAboveGround=50.0f;
+
     auto PlayerController = UGameplayStatics::GetPlayerController(this,0);
     PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-    
+
     FVector PlaneOrigin(0.0f, 0.0f, DistanceAboveGround);
     
     FVector ActorWorldLocation = FMath::LinePlaneIntersection(
@@ -309,6 +329,8 @@ void AMainCharacter::WallSkillOn()
     	WorldLocation + WorldDirection,
     	PlaneOrigin,
     	FVector::UpVector);   		
+
+
     FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
     
     AnimInstance->PlayWallSkillMontage();

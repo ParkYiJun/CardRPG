@@ -16,7 +16,7 @@ AWallSkill::AWallSkill()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("WALL"));
-	CollisionComp->InitBoxExtent(FVector(50.0f,20.0f,80.0f));
+	CollisionComp->InitBoxExtent(FVector(50.0f,20.0f,500.0f));
 	//CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	//CollisionComp->CanCharacterStepUpOn = ECB_No;
 	RootComponent = CollisionComp;
@@ -41,17 +41,9 @@ void AWallSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 		float WaitTime = 1.0f;
 		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
 			{
-				if (IsOverlapped == false)
-				{
+
 					UE_LOG(LogTemp, Warning, TEXT("DotF"));
 					UGameplayStatics::ApplyDamage(GetOtherActor, 10, NULL, GetOwner(), NULL);
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("DotT"));
-					UGameplayStatics::ApplyDamage(GetOtherActor, 10, NULL, GetOwner(), NULL);
-
-				}
 
 
 			}), WaitTime, true);

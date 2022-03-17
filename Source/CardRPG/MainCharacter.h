@@ -77,7 +77,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		class UCameraComponent* Camera;
-
+public:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* CastFrom;
 public:
