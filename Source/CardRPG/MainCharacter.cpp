@@ -35,6 +35,10 @@
 #include "InteractionInterface.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Hearing.h"
+#include "ai_tags.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -603,6 +607,16 @@ void AMainCharacter::setup_stimulus()
 	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("stimulus"));
 	stimulus->RegisterForSense(TSubclassOf < UAISense_Sight>());
 	stimulus->RegisterWithPerceptionSystem();
+}
+
+void AMainCharacter::on_distract()
+{
+	if (distraction_sound)
+	{
+		FVector const loc = GetActorLocation();
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), distraction_sound, loc);
+		UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
+	}
 }
 
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)
