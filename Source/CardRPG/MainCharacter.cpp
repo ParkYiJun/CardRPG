@@ -26,6 +26,8 @@
 #include "HealSkill.h"
 #include "ShieldSkill.h"
 #include "CardDropActor.h"
+#include "InGameHud.h"
+#include "HardAttackSkill.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -87,7 +89,7 @@ AMainCharacter::AMainCharacter()
 	{
 		CursorToWorld->SetDecalMaterial(DecalMaterialAsset.Object);
 	}
-	CursorToWorld->DecalSize = FVector(64.0f, 120.0f, 120.0f);
+	CursorToWorld->DecalSize = FVector(64.0f, 130.0f, 120.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
 
 
@@ -104,6 +106,7 @@ AMainCharacter::AMainCharacter()
 void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	
 	PC = Cast<APlayerController>(GetController());
     CursorToWorld->SetVisibility(false);
@@ -252,15 +255,69 @@ void AMainCharacter::Attack()
 
 	FVector SpawnLocation= CastFrom->GetComponentLocation();
 	FRotator SpawnRotation=GetCapsuleComponent()->GetComponentRotation();
-	GetWorld()->SpawnActor<ABullet>(SpawnLocation,SpawnRotation);
+	if (AttackIndex<5)
+	{
+		GetWorld()->SpawnActor<ABullet>(SpawnLocation, SpawnRotation);
+	}
+	else
+	{
+		GetWorld()->SpawnActor<AHardAttackSkill>(SpawnLocation,SpawnRotation);
+	}
 
 	AnimInstance->JumpToSection(AttackIndex);
 
-	AttackIndex = (AttackIndex + 1) % 5;
+	AttackIndex = (AttackIndex + 1) % 6;
 	IsAttacking = true;
 
 }
 
+void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
+	switch (SkillCode) {
+	case 101:
+		WallSkill();
+		break;
+	case 102:
+		Rush(); //Yellow Rush
+		break;
+	case 103:
+		Fast();
+		break;
+	case 104:
+		Mine();
+		break;
+	case 105:
+		Heal();
+		break;
+	case 106:
+		Shield();
+		break;
+	case 107:
+		RangeSkill();
+		break;
+	case 108:
+		Teleport();
+		break;
+	case 109: //ice_explosion
+		break;
+	case 110: //Blue Rush
+		break;
+	default:
+		break;
+	}
+}
+
+void AMainCharacter::UseSkill_R() { //Binding Q Key Released
+	switch (SkillCode)
+	{
+	case 101:
+		WallSkillOn();
+		break;
+	default:
+		break;
+	}
+}
+
+#pragma region Q Skills
 void AMainCharacter::Rush()
 {
 	if (IsSkillUsing)
@@ -277,6 +334,7 @@ void AMainCharacter::Rush()
 
 void AMainCharacter::WallSkill()
 {
+	UE_LOG(LogTemp, Warning,TEXT("WALLSKILL"));
 	if (IsSkillUsing)
 	{
 	return;
@@ -287,6 +345,16 @@ void AMainCharacter::WallSkill()
 }
 void AMainCharacter::WallSkillOn()
 {
+
+/*
+			FHitResult TraceHitResult;
+			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
+			FVector CursorFV = TraceHitResult.ImpactNormal;
+			FRotator CursorR = CursorFV.Rotation();
+			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
+			CursorToWorld->SetWorldRotation(CursorR);
+*/
+	UE_LOG(LogTemp, Warning, TEXT("WALLSKILLON"));
 	if (IsSkillUsing)
 	{
 		return;
@@ -295,10 +363,12 @@ void AMainCharacter::WallSkillOn()
     CursorToWorld->SetVisibility(false);
 	FVector WorldLocation;
     FVector WorldDirection;
-	float DistanceAboveGround = 50;
+	float DistanceAboveGround = CursorToWorld->GetComponentLocation().Z;
+	//float DistanceAboveGround=50.0f;
+
     auto PlayerController = UGameplayStatics::GetPlayerController(this,0);
     PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-    
+
     FVector PlaneOrigin(0.0f, 0.0f, DistanceAboveGround);
     
     FVector ActorWorldLocation = FMath::LinePlaneIntersection(
@@ -306,6 +376,8 @@ void AMainCharacter::WallSkillOn()
     	WorldLocation + WorldDirection,
     	PlaneOrigin,
     	FVector::UpVector);   		
+
+
     FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
     
     AnimInstance->PlayWallSkillMontage();
@@ -410,6 +482,8 @@ void AMainCharacter::Shield()
 
 }
 
+#pragma endregion
+
 void AMainCharacter::GenerateXp()
 {
 	GetWorld()->SpawnActor<ACardDropActor>(FireTornadoLocation->GetComponentLocation(), FRotator(0, 0, 0));
@@ -452,13 +526,11 @@ void AMainCharacter::DroneAttack()
 
 void AMainCharacter::Dead()
 {
-	if (IsSkillUsing)
-	{
-		return;
-	}
 	IsSkillUsing = true;
 	AnimInstance->PlayDeadMontage();
-
+	InGameHud = Cast<AInGameHud>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	InGameHud->UpdateWidgetVisibilityDead();
+	InGameHud->PlayAnimationByNameDead();
 	float WaitTime = 1.0;
 	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
 		{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -481,7 +553,8 @@ float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 		return DamageAmount;
 	}
 	Stats->OnAttacked(DamageAmount);
-	if (Stats->GetHp()==0 && IsDead==false)
+	AnimInstance->PlayAttackedMontage();
+	if (Stats->GetHp()<=0 && IsDead==false)
 	{
 		Dead();
 		IsDead=true;
@@ -536,6 +609,11 @@ void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupt
 {
 	IsAttacking = false;
 	IsSkillUsing=false;
+	if (IsDead==true)
+	{
+		IsAttacking = true;
+		IsSkillUsing = true;
+	}
 
 	OnAttackEnd.Broadcast();
 }

@@ -28,7 +28,7 @@ ACardRPGGameModeBase::ACardRPGGameModeBase()
 		CardDataTable = DTCPP_Card.Object;
 	}
 	
-	PlayerControllerClass = AMainPlayerController::StaticClass();
+	//PlayerControllerClass = AMainPlayerController::StaticClass();
 	PlayerStateClass = APlayerCardState::StaticClass();
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> main(TEXT("/Game/UI/UI"));

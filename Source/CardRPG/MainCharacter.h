@@ -42,6 +42,8 @@ public:
 	void LookUp(float Value);
 	void Dodge();
 	void Attack();
+	void UseSkill();
+	void UseSkill_R();
 	void Rush();
 	void WallSkill();
 	void WallSkillOn();
@@ -68,7 +70,7 @@ public:
 	FTimerHandle WaitHandleDrone;
 	FTimerHandle WaidHandleDead;
 
-	
+	int32 SkillCode;
 
 
 private:
@@ -77,7 +79,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		class UCameraComponent* Camera;
-
+public:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* CastFrom;
 public:
@@ -138,6 +140,9 @@ private:
 		FVector TelpoLoc;
 	UPROPERTY()
 		float WalkSpeed;
+
+	UPROPERTY()
+		class AInGameHud* InGameHud;
 
 
 
