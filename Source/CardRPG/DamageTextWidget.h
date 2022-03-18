@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
-#include "ExelGameInstance.generated.h"
+#include "Blueprint/UserWidget.h"
+#include "DamageTextWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CARDRPG_API UExelGameInstance : public UGameInstance
+class CARDRPG_API UDamageTextWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
