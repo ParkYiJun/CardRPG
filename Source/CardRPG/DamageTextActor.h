@@ -28,5 +28,8 @@ public:
 		class USceneComponent* _RootComponent;
 
 	UPROPERTY(EditAnywhere)
-		class UWidgetComponent* DamageTextWidget;
+		class UWidgetComponent* MyWidget;
+
+	UPROPERTY()
+		class UDamageTextWidget* DamageTextWidget;
 };

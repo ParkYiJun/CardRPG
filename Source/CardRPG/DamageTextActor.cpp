@@ -3,6 +3,8 @@
 
 #include "DamageTextActor.h"
 #include "Components/SceneComponent.h"
+#include "DamageTextWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "Components/WidgetComponent.h"
 
 // Sets default values
@@ -14,15 +16,24 @@ ADamageTextActor::ADamageTextActor()
 	_RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Component"));
 	RootComponent = _RootComponent;
 
-	DamageTextWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("DamageTextWidget"));
-	DamageTextWidget->SetupAttachment(RootComponent);
+	MyWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("DamageTextWidget"));
+	MyWidget->SetupAttachment(RootComponent);
+	static ConstructorHelpers::FClassFinder<UUserWidget>DW(TEXT("WidgetBlueprint'/Game/UI/WBP_FloatingDamageText.WBP_FloatingDamageText_C'"));
+	if (DW.Succeeded())
+	{
+	MyWidget->SetWidgetClass(DW.Class);
+	MyWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	}
 
+
+	InitialLifeSpan = 2.0f;
 }
 
 // Called when the game starts or when spawned
 void ADamageTextActor::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("ActorOn"));
 	
 }
 

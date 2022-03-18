@@ -28,6 +28,7 @@
 #include "CardDropActor.h"
 #include "InGameHud.h"
 #include "HardAttackSkill.h"
+#include "DamageTextActor.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -415,6 +416,7 @@ void AMainCharacter::Teleport()
 	FVector CurrentLoc= GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -88);
 
 	GetWorld()->SpawnActor<ATeleport>(TelpoLoc, FRotator(0, 0, 0));
+	GetWorld()->SpawnActor<ADamageTextActor>(TelpoLoc+FVector(0,0,50),FRotator(0,0,0));
 	GetWorld()->SpawnActor<ATeleport>(CurrentLoc, FRotator(0, 0, 0));
 	float WaitTime= 1.0f; //�ð��� �����ϰ�
 	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
@@ -499,7 +501,7 @@ void AMainCharacter::GenerateXp()
 void AMainCharacter::ResetWalkSpeed()
 {
 	UCharacterMovementComponent* CM = GetCharacterMovement();
-	CM->MaxWalkSpeed = WalkSpeed;
+	CM->MaxWalkSpeed = 600;
 }
 
 void AMainCharacter::DroneAttack()
@@ -557,6 +559,7 @@ float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	{
 		return DamageAmount;
 	}
+	GetWorld()->SpawnActor<ADamageTextActor>(GetActorLocation(), FRotator(0, 0, 0));
 	Stats->OnAttacked(DamageAmount);
 	AnimInstance->PlayAttackedMontage();
 	if (Stats->GetHp()<=0 && IsDead==false)
