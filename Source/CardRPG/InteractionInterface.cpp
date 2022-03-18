@@ -20,3 +20,8 @@ void IInteractionInterface::HideInteractionWidget()
 {
 
 }
+
+void IInteractionInterface::ShowDamageWidget()
+{
+
+}

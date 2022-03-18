@@ -28,6 +28,7 @@
 #include "CardDropActor.h"
 #include "InGameHud.h"
 #include "HardAttackSkill.h"
+#include "DamageTextActor.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -35,6 +36,10 @@
 #include "InteractionInterface.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Hearing.h"
+#include "ai_tags.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -203,6 +208,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
 	//Interact Key
 	PlayerInputComponent->BindAction(TEXT("Interact"),EInputEvent::IE_Pressed,this, &AMainCharacter::OnInteract);
+	PlayerInputComponent->BindAction(TEXT("Distract"), IE_Pressed, this, &AMainCharacter::on_distract);
 }
 
 void AMainCharacter::UpDown(float Value)
@@ -410,6 +416,7 @@ void AMainCharacter::Teleport()
 	FVector CurrentLoc= GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -88);
 
 	GetWorld()->SpawnActor<ATeleport>(TelpoLoc, FRotator(0, 0, 0));
+	GetWorld()->SpawnActor<ADamageTextActor>(TelpoLoc+FVector(0,0,50),FRotator(0,0,0));
 	GetWorld()->SpawnActor<ATeleport>(CurrentLoc, FRotator(0, 0, 0));
 	float WaitTime= 1.0f; //�ð��� �����ϰ�
 	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
@@ -494,7 +501,7 @@ void AMainCharacter::GenerateXp()
 void AMainCharacter::ResetWalkSpeed()
 {
 	UCharacterMovementComponent* CM = GetCharacterMovement();
-	CM->MaxWalkSpeed = WalkSpeed;
+	CM->MaxWalkSpeed = 600;
 }
 
 void AMainCharacter::DroneAttack()
@@ -552,6 +559,7 @@ float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	{
 		return DamageAmount;
 	}
+	GetWorld()->SpawnActor<ADamageTextActor>(GetActorLocation(), FRotator(0, 0, 0));
 	Stats->OnAttacked(DamageAmount);
 	AnimInstance->PlayAttackedMontage();
 	if (Stats->GetHp()<=0 && IsDead==false)
@@ -603,6 +611,16 @@ void AMainCharacter::setup_stimulus()
 	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("stimulus"));
 	stimulus->RegisterForSense(TSubclassOf < UAISense_Sight>());
 	stimulus->RegisterWithPerceptionSystem();
+}
+
+void AMainCharacter::on_distract()
+{
+	if (distraction_sound)
+	{
+		FVector const loc = GetActorLocation();
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), distraction_sound, loc);
+		UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
+	}
 }
 
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)
