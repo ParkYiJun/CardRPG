@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "FollowingDrone.h"
+#include "Sound/SoundBase.h"
 #include "MainCharacter.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttackEnd);
@@ -42,6 +43,8 @@ public:
 	void LookUp(float Value);
 	void Dodge();
 	void Attack();
+	void UseSkill();
+	void UseSkill_R();
 	void Rush();
 	void WallSkill();
 	void WallSkillOn();
@@ -68,7 +71,7 @@ public:
 	FTimerHandle WaitHandleDrone;
 	FTimerHandle WaidHandleDead;
 
-	
+	int32 SkillCode;
 
 
 private:
@@ -187,11 +190,14 @@ private:
 	float DHealth = 100;
 
 private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
+	USoundBase* distraction_sound;
+	
 	void on_exit_game();
 
 	class UAIPerceptionStimuliSourceComponent* stimulus;
 
 	void setup_stimulus();
 
-
+	void on_distract();
 };

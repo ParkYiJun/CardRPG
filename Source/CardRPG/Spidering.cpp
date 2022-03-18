@@ -39,13 +39,12 @@ void ASpidering::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 
 }
 
-int ASpidering::melee_attack_Implementation()
+void ASpidering::melee_attack()
 {
 	if (montage)
 	{
 		PlayAnimMontage(montage);
 	}
-	return 0;
 }
 
 UAnimMontage* ASpidering::get_montage() const

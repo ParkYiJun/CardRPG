@@ -29,8 +29,10 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupInputComponent() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player State")
+	UPROPERTY(BlueprintReadOnly, Category = "Player State")
 		APlayerCardState* CardState;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Event UI")
+		TSubclassOf<UUserWidget> CardGetEvent_UI;
 	
 	UFUNCTION()
 		void UsingCardSkill();
@@ -47,11 +49,11 @@ protected:
 		void DrawRandomCard();
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card Skill")
+	UPROPERTY(BlueprintReadWrite, Category = "Card Skill")
 		FName CurCard;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Variables")
+	UPROPERTY(BlueprintReadWrite, Category = "Control Variables")
 		FName DetailCard;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Control Variables")
+	UPROPERTY(BlueprintReadWrite, Category = "Control Variables")
 		bool LockCUsing;
 	UPROPERTY(BlueprintReadWrite, Category = "Control Variables")
 		bool bShowCardList;

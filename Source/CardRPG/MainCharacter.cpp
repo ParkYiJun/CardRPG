@@ -35,6 +35,10 @@
 #include "InteractionInterface.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Perception/AISense_Hearing.h"
+#include "ai_tags.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
@@ -203,6 +207,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
 	//Interact Key
 	PlayerInputComponent->BindAction(TEXT("Interact"),EInputEvent::IE_Pressed,this, &AMainCharacter::OnInteract);
+	PlayerInputComponent->BindAction(TEXT("Distract"), IE_Pressed, this, &AMainCharacter::on_distract);
 }
 
 void AMainCharacter::UpDown(float Value)
@@ -271,6 +276,53 @@ void AMainCharacter::Attack()
 
 }
 
+void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
+	switch (SkillCode) {
+	case 101:
+		WallSkill();
+		break;
+	case 102:
+		Rush(); //Yellow Rush
+		break;
+	case 103:
+		Fast();
+		break;
+	case 104:
+		Mine();
+		break;
+	case 105:
+		Heal();
+		break;
+	case 106:
+		Shield();
+		break;
+	case 107:
+		RangeSkill();
+		break;
+	case 108:
+		Teleport();
+		break;
+	case 109: //ice_explosion
+		break;
+	case 110: //Blue Rush
+		break;
+	default:
+		break;
+	}
+}
+
+void AMainCharacter::UseSkill_R() { //Binding Q Key Released
+	switch (SkillCode)
+	{
+	case 101:
+		WallSkillOn();
+		break;
+	default:
+		break;
+	}
+}
+
+#pragma region Q Skills
 void AMainCharacter::Rush()
 {
 	if (IsSkillUsing)
@@ -435,6 +487,8 @@ void AMainCharacter::Shield()
 
 }
 
+#pragma endregion
+
 void AMainCharacter::GenerateXp()
 {
 	GetWorld()->SpawnActor<ACardDropActor>(FireTornadoLocation->GetComponentLocation(), FRotator(0, 0, 0));
@@ -554,6 +608,16 @@ void AMainCharacter::setup_stimulus()
 	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("stimulus"));
 	stimulus->RegisterForSense(TSubclassOf < UAISense_Sight>());
 	stimulus->RegisterWithPerceptionSystem();
+}
+
+void AMainCharacter::on_distract()
+{
+	if (distraction_sound)
+	{
+		FVector const loc = GetActorLocation();
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), distraction_sound, loc);
+		UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
+	}
 }
 
 void AMainCharacter::OnAttackMontageEnded(UAnimMontage* montage, bool bInterrupted)
