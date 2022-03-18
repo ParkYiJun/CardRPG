@@ -21,31 +21,15 @@ ACardRPGGameModeBase::ACardRPGGameModeBase()
 		DefaultPawnClass = BP_Char.Class;
 	}
 
-	static ConstructorHelpers::FObjectFinder<UDataTable> DTCPP_Card(TEXT("DataTable'/Game/Developers/ooo95/Collections/UserInterface/Structure/DT_Cards.DT_Cards'"));
+	static ConstructorHelpers::FObjectFinder<UDataTable> DTCPP_Card(TEXT("DataTable'/Game/Data/DT_Card.DT_Card'"));
 
 	if (DTCPP_Card.Succeeded()) {
 		UE_LOG(LogTemp, Warning, TEXT("DataTable Succeed"));
 		CardDataTable = DTCPP_Card.Object;
 	}
 	
-	//PlayerControllerClass = AMainPlayerController::StaticClass();
-	PlayerStateClass = APlayerCardState::StaticClass();
 
-	static ConstructorHelpers::FClassFinder<UUserWidget> main(TEXT("/Game/UI/UI"));
-	if (main.Succeeded()) {
-		MainUI = main.Class;
-	}
-
-	static ConstructorHelpers::FClassFinder<UUserWidget> lobby(TEXT("/Game/UI/Lobby"));
-	if (lobby.Succeeded()) {
-		LobbyUI = lobby.Class;
-	}
-
-	//static ConstructorHelpers::FClassFinder<UUserWidget> title(TEXT("/Game/UI/Title"));
-	//if (title.Succeeded()) {
-	//	TitleUI = title.Class;
-	//}
-	
+	PlayerStateClass = APlayerCardState::StaticClass();	
 }
 
 void ACardRPGGameModeBase::BeginPlay() {
@@ -77,6 +61,11 @@ FName ACardRPGGameModeBase::CardAt(int32 idx) {
 	else {
 		return SpecialCard;
 	}
+}
+
+int32 ACardRPGGameModeBase::GetCardCode(FName name) {
+	FCard thatCard = *(CardDataTable->FindRow<FCard>(name, name.ToString()));
+	return thatCard.SkillCode;
 }
 
 void ACardRPGGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass) {

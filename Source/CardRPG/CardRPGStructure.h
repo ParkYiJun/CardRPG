@@ -34,7 +34,7 @@ struct FCard : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FString Detail;
+		int32 SkillCode;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UTexture2D* Image;
 };
