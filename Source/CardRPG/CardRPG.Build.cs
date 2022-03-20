@@ -9,7 +9,7 @@ public class CardRPG : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" ,"UMG","HeadMountedDisplay","AIModule","GamePlayTasks", "NavigationSystem" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" ,"UMG","HeadMountedDisplay","AIModule","GamePlayTasks", "NavigationSystem", "Slate", "SlateCore" });
 
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

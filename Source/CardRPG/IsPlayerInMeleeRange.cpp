@@ -9,6 +9,7 @@
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "blackboard_keys.h"
+#include <cmath>
 
 UIsPlayerInMeleeRange::UIsPlayerInMeleeRange()
 {
@@ -27,6 +28,11 @@ void UIsPlayerInMeleeRange::OnBecomeRelevant(UBehaviorTreeComponent& owner_comp,
 	//get player character
 	ACharacter* const player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 
+	float const distance = spidering->GetDistanceTo(player);
+
+	UE_LOG(LogTemp, Warning, TEXT("Distance: %d"), distance);
+
 	//write true or false depending on whether the player is within melee_range
-	cont->get_blackboard()->SetValueAsBool(bb_keys::player_is_in_melee_range, spidering->GetDistanceTo(player) <= melee_range);
+	cont->get_blackboard()->SetValueAsBool(GetSelectedBlackboardKey(), distance <= melee_range);
 }
+   

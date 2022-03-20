@@ -31,7 +31,15 @@ public:
 
 	UAnimMontage* get_montage() const;
 
+	float get_health() const;
+	float get_max_health() const;
+	void set_health(float const new_health);
+
 private:
+	class UWidgetComponent* widget_component;
+	float const max_health = 100;
+	float health;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* montage;
 

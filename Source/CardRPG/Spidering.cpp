@@ -7,6 +7,9 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/WidgetComponent.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 ASpidering::ASpidering()
@@ -50,5 +53,20 @@ void ASpidering::melee_attack()
 UAnimMontage* ASpidering::get_montage() const
 {
 	return montage;
+}
+
+float ASpidering::get_health() const
+{
+	return health;
+}
+
+float ASpidering::get_max_health() const
+{
+	return max_health;
+}
+
+void ASpidering::set_health(float const new_health)
+{
+	health = new_health;
 }
 
