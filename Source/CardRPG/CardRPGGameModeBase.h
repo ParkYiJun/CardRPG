@@ -37,6 +37,9 @@ public:
 		int32 GetCardCode(FName name);
 	UFUNCTION(BlueprintCallable, Category = "Widget Utilities")
 		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+	UFUNCTION(BlueprintCallable, Category = "Widget Utilities")
+		void GotoLobby();
+
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<UUserWidget> TitleUI;
 	UPROPERTY(EditAnywhere, Category = "Widget")

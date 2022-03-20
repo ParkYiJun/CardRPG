@@ -25,6 +25,7 @@ protected:
 		class UTextBlock* ShowName;
 	UPROPERTY(meta = (BindWidget))
 		class UButton* BNextMain;
-
+	
+	UFUNCTION()
 	void GotoNextLevel();
 };

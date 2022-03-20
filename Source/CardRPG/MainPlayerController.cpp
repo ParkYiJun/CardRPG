@@ -52,14 +52,23 @@ void AMainPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction(TEXT("Slots"), EInputEvent::IE_Pressed, this, &AMainPlayerController::OpeningCardList);
-	InputComponent->BindAction(TEXT("X"), EInputEvent::IE_Pressed, this, &AMainPlayerController::ClosingPopups);
+	//InputComponent->BindAction(TEXT("X"), EInputEvent::IE_Pressed, this, &AMainPlayerController::ClosingPopups);
 }
 
 
 void AMainPlayerController::OpeningCardList() {
+	SetIgnoreLookInput(true);
 	bShowCardList = !bShowCardList;
-	SetShowMouseCursor(bShowCardList);
-	if (!bShowCardList) bShowDetail = false;
+
+	if (!bShowCardList) {
+		bShowDetail = false;
+		this->SetInputMode(FInputModeGameOnly());
+		SetShowMouseCursor(false);
+	}
+	else {
+		this->SetInputMode(FInputModeGameAndUI());
+		SetShowMouseCursor(true);
+	}
 	
 }
 

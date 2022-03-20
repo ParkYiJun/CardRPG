@@ -8,11 +8,18 @@
 
 void ULobbyWidget::NativeConstruct() {
 	Super::NativeConstruct();
+	GetOwningPlayer()->SetInputMode(FInputModeUIOnly());
 
 	BNextMain->OnClicked.AddDynamic(this, &ULobbyWidget::GotoNextLevel);
-	TransferLevelName = TEXT("M_UITEST");
+	TransferLevelName = TEXT("Level_Start");
 }
 
 void ULobbyWidget::GotoNextLevel() {
-	UGameplayStatics::OpenLevel(this, FName(*TransferLevelName));
+	ACardRPGGameModeBase* myGamemode = Cast<ACardRPGGameModeBase>(GetWorld()->GetAuthGameMode());
+	UE_LOG(LogTemp, Error, TEXT("Let's go to MainLevel"));
+	if (myGamemode != nullptr) {
+		myGamemode->SetMainUI();
+		GetOwningPlayer()->SetInputMode(FInputModeGameOnly());
+		GetOwningPlayer()->SetShowMouseCursor(false);
+	}
 }
