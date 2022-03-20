@@ -1,0 +1,11 @@
+---,SkillCode,Image
+electric_shock,107,Texture2D'/Game/Resources/UserInterface/card/electric_shork_card.electric_shork_card'
+electric_warrior,102,Texture2D'/Game/Resources/UserInterface/card/electric_warrior_attack_card.electric_warrior_attack_card'
+fire_spider,104,Texture2D'/Game/Resources/UserInterface/card/fire_spider_mind_card.fire_spider_mind_card'
+heal,105,Texture2D'/Game/Resources/UserInterface/card/heal_card.heal_card'
+ice_explosion,109,Texture2D'/Game/Resources/UserInterface/card/ice_explosion_card.ice_explosion_card'
+ice_warrior,110,Texture2D'/Game/Resources/UserInterface/card/ice_warrior_attack_card.ice_warrior_attack_card'
+light_walk,103,Texture2D'/Game/Resources/UserInterface/card/light_walk_card.light_walk_card'
+rising_fire,101,Texture2D'/Game/Resources/UserInterface/card/rising_fire_card.rising_fire_card'
+shield,106,Texture2D'/Game/Resources/UserInterface/card/Sheild_card.Sheild_card'
+teleport,108,Texture2D'/Game/Resources/UserInterface/card/Teleport_card.Teleport_card'

@@ -4,6 +4,7 @@
 #include "LobbyWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "CardRPGGameModeBase.h"
 
 void ULobbyWidget::NativeConstruct() {
 	Super::NativeConstruct();

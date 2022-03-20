@@ -25,4 +25,5 @@ public:
 	virtual void InteractWithMe();
 	virtual void ShowInteractionWidget();
 	virtual void HideInteractionWidget();
+	virtual void ShowDamageWidget();
 };

@@ -33,7 +33,9 @@ public:
 		int32 FindCard(FName name);
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
 		FName CardAt(int32 idx);
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
+		int32 GetCardCode(FName name);
+	UFUNCTION(BlueprintCallable, Category = "Widget Utilities")
 		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<UUserWidget> TitleUI;
@@ -43,5 +45,6 @@ public:
 		TSubclassOf<UUserWidget> MainUI;
 
 	FORCEINLINE int32 GetCardsNum() { return this->CardNames.Num(); }
-	FORCEINLINE void GotoMainLevel() { ChangeMenuWidget(MainUI); }
+	FORCEINLINE void SetMainUI() { ChangeMenuWidget(MainUI); }
+	FORCEINLINE void SetTitleUI() { ChangeMenuWidget(TitleUI); }
 };

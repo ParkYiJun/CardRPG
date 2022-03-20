@@ -7,6 +7,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "CardRPGGameModeBase.h"
+#include "MainCharacter.h"
 
 AMainPlayerController::AMainPlayerController() {
 	
@@ -50,20 +51,10 @@ void AMainPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	//InputComponent->BindAction(TEXT("WallSkill"), EInputEvent::IE_Pressed, this, &AMainPlayerController::UsingCardSkill);
-	//InputComponent->BindAction(TEXT("WallSkill"), EInputEvent::IE_Released, this, &AMainPlayerController::UsingCardSkill_R);
 	InputComponent->BindAction(TEXT("Slots"), EInputEvent::IE_Pressed, this, &AMainPlayerController::OpeningCardList);
-	//InputComponent->BindAction(TEXT("X"), EInputEvent::IE_Pressed, this, &AMainPlayerController::ClosingPopups);
-	//InputComponent->BindAction(TEXT("E"), EInputEvent::IE_Pressed, this, &AMainPlayerController::ClosingPopups);
+	InputComponent->BindAction(TEXT("X"), EInputEvent::IE_Pressed, this, &AMainPlayerController::ClosingPopups);
 }
 
-void AMainPlayerController::UsingCardSkill() {
-	CardState->UseCard(cardIndex);
-}
-
-void AMainPlayerController::UsingCardSkill_R() {
-
-}
 
 void AMainPlayerController::OpeningCardList() {
 	bShowCardList = !bShowCardList;
@@ -97,6 +88,10 @@ void AMainPlayerController::DrawRandomCard() {
 		if (random <= cover) {
 			ACardRPGGameModeBase* gamemode = Cast<ACardRPGGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 			CurCard = gamemode->CardAt(i);
+			AMainCharacter* character = Cast<AMainCharacter>(GetCharacter());
+			if (character) {
+				character->SkillCode = gamemode->GetCardCode(CurCard);
+			}
 			break;
 		}
 	}

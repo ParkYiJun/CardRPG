@@ -35,10 +35,6 @@ protected:
 		TSubclassOf<UUserWidget> CardGetEvent_UI;
 	
 	UFUNCTION()
-		void UsingCardSkill();
-	UFUNCTION()
-		void UsingCardSkill_R();
-	UFUNCTION()
 		void OpeningCardList();
 	UFUNCTION()
 		void ClosingPopups();

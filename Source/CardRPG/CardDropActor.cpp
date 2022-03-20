@@ -53,6 +53,7 @@ void ACardDropActor::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, c
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GetXP!"));
 		MainCharacter->GetXP(15);
+
 		Destroy();
 	}
 }
