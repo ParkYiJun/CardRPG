@@ -43,10 +43,9 @@ void ACardRPGGameModeBase::BeginPlay() {
 		FText msg = FText::Format(FTextFormat::FromString("Card Name[{Index}] : {Name}"), Args);
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, msg.ToString());
-		
 	}
 
-	ChangeMenuWidget(MainUI);
+	ChangeMenuWidget(TitleUI);
 }
 
 
@@ -73,10 +72,15 @@ void ACardRPGGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetCl
 		CurUI->RemoveFromViewport();
 		CurUI = nullptr;
 	}
-	else {
+	
+	if (NewWidgetClass != nullptr) {
 		CurUI = CreateWidget(GetWorld(), NewWidgetClass);
 		if (CurUI != nullptr) {
 			CurUI->AddToViewport();
 		}
 	}
+}
+
+void ACardRPGGameModeBase::GotoLobby(){
+	ChangeMenuWidget(LobbyUI);
 }
