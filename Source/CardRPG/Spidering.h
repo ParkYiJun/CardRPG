@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Animation/AnimMontage.h"
+#include "CardRPG_CharacterBase.h"
 #include "Spidering.generated.h"
 
 UCLASS()
-class CARDRPG_API ASpidering : public ACharacter
+class CARDRPG_API ASpidering : public ACardRPG_CharacterBase
 {
 	GENERATED_BODY()
 
@@ -42,5 +43,21 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* montage;
+
+	UFUNCTION()
+		void on_attack_overlap_begin(
+			UPrimitiveComponent* const overlapped_component,
+			AActor* const other_actor,
+			UPrimitiveComponent* other_component,
+			int const other_body_index,
+			bool const from_sweep,
+			FHitResult const& sweep_result);
+
+	UFUNCTION()
+		void on_attack_overlap_end(
+			UPrimitiveComponent* const overlapped_component,
+			AActor* const other_actor,
+			UPrimitiveComponent* other_component,
+			int const other_body_index);
 
 };

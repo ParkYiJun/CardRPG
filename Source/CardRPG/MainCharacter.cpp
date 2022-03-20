@@ -40,9 +40,21 @@
 #include "ai_tags.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
+#include "Components/WidgetComponent.h"
+#include "UObject/ConstructorHelpers.h"
+#include "healthBar.h"
+#include "Runtime/Engine/Classes/Components/BoxComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Animation/AnimMontage.h"
+#include "Spidering.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 
 // Sets default values
-AMainCharacter::AMainCharacter()
+AMainCharacter::AMainCharacter() :	
+	health(max_health),
+	widget_component(CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthValue"))),
+	right_fist_collision_box(CreateDefaultSubobject<UBoxComponent>(TEXT("RightFistCollisionBox")))
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -105,6 +117,37 @@ AMainCharacter::AMainCharacter()
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
 	setup_stimulus();
+
+	if (widget_component)
+	{
+		widget_component->SetupAttachment(RootComponent);
+		widget_component->SetWidgetSpace(EWidgetSpace::Screen);
+		widget_component->SetRelativeLocation(FVector(0.0f, 0.0f, 85.0f));
+		static ConstructorHelpers::FClassFinder<UUserWidget> widget_class(TEXT("/Game/UI/healthBar_BP"));
+		if (widget_class.Succeeded())
+		{
+			widget_component->SetWidgetClass(widget_class.Class);
+		}
+	}
+	if (right_fist_collision_box)
+	{
+		FVector const extent(5.0f);
+		right_fist_collision_box->SetBoxExtent(extent, false);
+		right_fist_collision_box->SetCollisionProfileName("NoCollision");
+	}
+}
+
+void AMainCharacter::on_attack_overlap_begin(UPrimitiveComponent* const overlapped_component, AActor* const other_actor, UPrimitiveComponent* other_component, int const other_body_index, bool const from_sweep, FHitResult const& sweep_result)
+{
+	if (ASpidering* const spidering = Cast<ASpidering>(other_actor))
+	{
+		float const new_health = spidering->get_health() - spidering->get_max_health() * 0.1f;
+		spidering->set_health(new_health);
+	}
+}
+
+void AMainCharacter::on_attack_overlap_end(UPrimitiveComponent* const overlapped_component, AActor* const other_actor, UPrimitiveComponent* other_component, int const other_body_index)
+{
 }
 
 // Called when the game starts or when spawned
@@ -117,6 +160,22 @@ void AMainCharacter::BeginPlay()
     CursorToWorld->SetVisibility(false);
 	//InteractionBox->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnBoxBeginOverlap);
 	//InteractionBox->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnBoxEndOverlap);
+	if (right_fist_collision_box)
+	{
+		FAttachmentTransformRules const rules(
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::SnapToTarget,
+			EAttachmentRule::KeepWorld,
+			false);
+		right_fist_collision_box->AttachToComponent(GetMesh(), rules, "hand_r_socket");
+		right_fist_collision_box->SetRelativeLocation(FVector(-7.0f, 0.0f, 0.0f));
+	}
+
+	if (right_fist_collision_box)
+	{
+		right_fist_collision_box->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::on_attack_overlap_begin);
+		right_fist_collision_box->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::on_attack_overlap_end);
+	}
 }
 
 void AMainCharacter::PostInitializeComponents()
@@ -130,10 +189,30 @@ void AMainCharacter::PostInitializeComponents()
 
 }
 
+float AMainCharacter::get_health() const
+{
+	return health;
+}
+
+float AMainCharacter::get_max_health() const
+{
+	return max_health;
+}
+
+void AMainCharacter::set_health(float const new_health)
+{
+	health = new_health;
+}
+
 // Called every frame
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	auto const uw = Cast<UhealthBar>(widget_component->GetUserWidgetObject());
+	if (uw)
+	{
+		uw->set_bar_value_percent(health / max_health);
+	}
 
 	if (CursorToWorld != nullptr)
 	{

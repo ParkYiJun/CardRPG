@@ -15,10 +15,9 @@ class CARDRPG_API UhealthBar : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	void NariveConstruct() override;
+	void NativeConstruct() override;
 	void set_bar_value_percent(float const value);
 protected:
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	UProgressBar* health_value = nullptr;
-	
 };
