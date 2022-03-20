@@ -215,6 +215,7 @@ void AMainCharacter::UpDown(float Value)
 {	
 	if ((IsAttacking==false)&&(IsSkillUsing==false))
 	{
+		AttackIndex=0;
 		UpdownValue = Value;
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
@@ -226,6 +227,7 @@ void AMainCharacter::LeftRight(float Value)
 {
 	if ((IsAttacking == false) && (IsSkillUsing == false))
 	{
+		AttackIndex = 0;
 		LeftRightValue = Value;
 		AddMovementInput(GetActorRightVector(), Value);
 	}
@@ -310,6 +312,7 @@ void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
 	default:
 		break;
 	}
+	AttackIndex = 0;
 }
 
 void AMainCharacter::UseSkill_R() { //Binding Q Key Released
