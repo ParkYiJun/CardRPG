@@ -22,7 +22,9 @@ private:
 	bool isDraw;
 	bool isUse;
 	int32 cardIndex;
-	
+
+	UPROPERTY()
+		TArray<int32> gatheredCard;
 
 protected:
 	virtual void BeginPlay() override;
@@ -43,7 +45,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "Card Skill")
 		void DrawRandomCard();
-
+	UFUNCTION()
+		void GetNewCards();
 public:
 	UPROPERTY(BlueprintReadWrite, Category = "Card Skill")
 		FName CurCard;
@@ -55,6 +58,8 @@ public:
 		bool bShowCardList;
 	UPROPERTY(BlueprintReadWrite, Category = "Control Variables")
 		bool bShowDetail;
+
+	FORCEINLINE int32 WhereAt(int32 idx) { return gatheredCard[idx]; }
 };
 
 

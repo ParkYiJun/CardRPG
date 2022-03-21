@@ -55,9 +55,8 @@ void AMainPlayerController::SetupInputComponent()
 	//InputComponent->BindAction(TEXT("X"), EInputEvent::IE_Pressed, this, &AMainPlayerController::ClosingPopups);
 }
 
-
+#pragma region Control Variables Function
 void AMainPlayerController::OpeningCardList() {
-	SetIgnoreLookInput(true);
 	bShowCardList = !bShowCardList;
 
 	if (!bShowCardList) {
@@ -77,7 +76,9 @@ void AMainPlayerController::ClosingPopups() {
 	else
 		if (bShowCardList) bShowCardList = false;
 }
+#pragma endregion
 
+#pragma region Can Move Later
 void AMainPlayerController::GetCards() {
 	ACardRPGGameModeBase* gamemode = Cast<ACardRPGGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	//특수 카드 분기 필요
@@ -106,3 +107,11 @@ void AMainPlayerController::DrawRandomCard() {
 	}
 }
 
+void AMainPlayerController::GetNewCards() {
+	for (int32 i = 0; i < 3; i++) {
+		gatheredCard[i] = FMath::RandRange(0, CardState->CardLists.Last());
+		CardState->AddCard(gatheredCard[i]);
+	}
+}
+
+#pragma endregion
