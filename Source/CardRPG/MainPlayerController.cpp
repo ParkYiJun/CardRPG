@@ -57,7 +57,7 @@ void AMainPlayerController::SetupInputComponent()
 
 
 void AMainPlayerController::OpeningCardList() {
-	SetIgnoreLookInput(true);
+	//SetIgnoreLookInput(true);
 	bShowCardList = !bShowCardList;
 
 	if (!bShowCardList) {
