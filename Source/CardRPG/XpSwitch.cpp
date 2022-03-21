@@ -7,6 +7,7 @@
 #include "Components/WidgetComponent.h"
 #include "CardDropActor.h"
 #include "Components/PointLightComponent.h"
+#include "MainPlayerController.h"
 
 // Sets default values
 AXpSwitch::AXpSwitch()
@@ -59,6 +60,12 @@ void AXpSwitch::InteractWithMe()
 			SpawnVector.Y = FMath::FRandRange(-500, 500);
 			GetWorld()->SpawnActor<ACardDropActor>(RootComponent->GetComponentLocation() + SpawnVector, FRotator(0, 0, 0));
 		}
+
+		AMainPlayerController* player = Cast<AMainPlayerController>(GetWorld()->GetFirstPlayerController());
+		if (player != nullptr) {
+			if (player->DelGetThree.IsBound())player->DelGetThree.Execute();
+		}
+
 		Destroy();
 	}
 	else

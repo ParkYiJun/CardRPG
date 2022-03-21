@@ -11,6 +11,8 @@
 /**
  * 
  */
+
+DECLARE_DELEGATE(FGetCards);
 UCLASS()
 class CARDRPG_API AMainPlayerController : public APlayerController
 {
@@ -25,7 +27,8 @@ private:
 
 	UPROPERTY()
 		TArray<int32> gatheredCard;
-
+	UFUNCTION()
+		void CreateGetsEvent();
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
@@ -60,6 +63,8 @@ public:
 		bool bShowDetail;
 
 	FORCEINLINE int32 WhereAt(int32 idx) { return gatheredCard[idx]; }
+
+	FGetCards DelGetThree;
 };
 
 

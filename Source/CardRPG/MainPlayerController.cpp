@@ -21,6 +21,7 @@ AMainPlayerController::AMainPlayerController() {
 }
 
 void AMainPlayerController::BeginPlay() {
+	DelGetThree.BindUFunction(this, FName("CreateGetsEvent"));
 }
 
 void AMainPlayerController::Tick(float DeltaSeconds)
@@ -34,16 +35,6 @@ void AMainPlayerController::Tick(float DeltaSeconds)
 	}
 	else {
 		if (!isDraw) isDraw = true;
-	}
-
-	if (WasInputKeyJustPressed(EKeys::Z)) {
-		UUserWidget* Popup =  CreateWidget(this, CardGetEvent_UI);
-		if (Popup != nullptr) {
-			SetPause(true);
-			SetShowMouseCursor(true);
-			
-			Popup->AddToViewport(0);
-		}
 	}
 }
 
@@ -111,6 +102,19 @@ void AMainPlayerController::GetNewCards() {
 	for (int32 i = 0; i < 3; i++) {
 		gatheredCard[i] = FMath::RandRange(0, CardState->CardLists.Last());
 		CardState->AddCard(gatheredCard[i]);
+	}
+}
+
+#pragma endregion
+#pragma region Delegate
+
+void AMainPlayerController::CreateGetsEvent() {
+	UUserWidget* Popup = CreateWidget(this, CardGetEvent_UI);
+	if (Popup != nullptr) {
+		SetPause(true);
+		SetShowMouseCursor(true);
+
+		Popup->AddToViewport(0);
 	}
 }
 
