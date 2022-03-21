@@ -14,6 +14,7 @@
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "MainCharacter.h"
 #include "StatComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASpidering::ASpidering() :
@@ -56,6 +57,7 @@ void ASpidering::on_attack_overlap_begin(UPrimitiveComponent* const overlapped_c
 {
 	if (AMainCharacter* const player = Cast<AMainCharacter>(other_actor))
 	{
+		UGameplayStatics::ApplyDamage(other_actor, 10, NULL, GetOwner(), NULL);
 	}
 }
 
