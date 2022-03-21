@@ -25,7 +25,15 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* right_fist_collision_box;
+
 	virtual void PostInitializeComponents() override;
+
+	float get_health() const;
+	float get_max_health() const;
+	void set_health(float const new_health);
+
 
 public:	
 	// Called every frame
@@ -190,14 +198,36 @@ private:
 	float DHealth = 100;
 
 private:
+	class UWidgetComponent* widget_component;
+	float const max_health = 100.0f;
+	float health;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
-	USoundBase* distraction_sound;
-	
+	USoundBase* distraction_sound;   
+
 	void on_exit_game();
 
 	class UAIPerceptionStimuliSourceComponent* stimulus;
 
 	void setup_stimulus();
 
+	void on_attack();
 	void on_distract();
+
+	UFUNCTION()
+	void on_attack_overlap_begin(
+		UPrimitiveComponent* const overlapped_component,
+		AActor* const other_actor,
+		UPrimitiveComponent* other_component,
+		int const other_body_index,
+		bool const from_sweep,
+		FHitResult const& sweep_result);
+
+	UFUNCTION()
+	void on_attack_overlap_end(
+		UPrimitiveComponent* const overlapped_component,
+		AActor* const other_actor,
+		UPrimitiveComponent* other_component,
+		int const other_body_index);
+
 };
