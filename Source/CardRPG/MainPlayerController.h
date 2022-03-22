@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "CardRPG.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/DataTable.h"
 #include "PlayerCardState.h"

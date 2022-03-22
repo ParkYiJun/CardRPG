@@ -10,11 +10,11 @@ void APlayerCardState::BeginPlay(){
 	class ACardRPGGameModeBase* MyMode = Cast<ACardRPGGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	
 	CardLists.Init( 0, MyMode->GetCardsNum());
-	UE_LOG(LogTemp, Warning, TEXT("Card list : %d"), CardLists.Num());
+	UE_LOG(FantasyHolic, Log, TEXT("Card list : %d"), CardLists.Num());
 }
 
 void APlayerCardState::AddCard(int32 index) {
-	if (index > 0) {
+	if (index >= 0) {
 		CardLists[index]++;
 		SetTotalCards();
 	}
@@ -35,8 +35,20 @@ bool APlayerCardState::UseCard(int32 index) {
 }
 
 void APlayerCardState::SetTotalCards() {
+	ACardRPGGameModeBase* gamemode = Cast<ACardRPGGameModeBase>(GetWorld()->GetAuthGameMode());
 	Total = 0;
-	for (int32 i = 0; i < CardLists.Num() - 1; i++) {
+	for (int32 i = 0; i < gamemode->GetCardsNum(); i++) {
 		Total += CardLists[i];
 	}
+}
+
+void APlayerCardState::DebugSlotsLists() {
+	for (int32 i = 0; i < CardLists.Num(); i++) {
+		UE_LOG(FantasyHolic, Warning, TEXT("Array[%d]: %d°³"), i, CardLists[i]);
+	}
+}
+
+int32 APlayerCardState::ArrayAt(int32 idx) {
+	if (CardLists.IsValidIndex(idx)) return CardLists[idx];
+	else return -1;
 }

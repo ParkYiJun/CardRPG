@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "CardRPG.h"
 #include "GameFramework/PlayerState.h"
 #include "PlayerCardState.generated.h"
 
@@ -23,6 +23,7 @@ protected:
 	//	void SetCard();
 
 public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CardList")
 		TArray<int32> CardLists;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Card List")
@@ -31,6 +32,10 @@ public:
 		void AddCard(int32 index);
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
 		bool UseCard(int32 index);
+	UFUNCTION()
+		void DebugSlotsLists();
+	UFUNCTION()
+		int32 ArrayAt(int32 idx);
 private:
 	void SetTotalCards();
 };

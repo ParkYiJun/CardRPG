@@ -10,24 +10,27 @@
 #include "MainCharacter.h"
 
 AMainPlayerController::AMainPlayerController() {
-	
-	CardState = Cast<APlayerCardState>(this->PlayerState);
-	if (CardState) {
-		UE_LOG(LogTemp, Warning, TEXT("Cast Success: APlayerCardState"));
-	}
-
 	isDraw = true;
 	isUse = true;
+	LockCUsing = true;
+	gatheredCard.Init(0, 3);
 }
 
 void AMainPlayerController::BeginPlay() {
+	CardState = Cast<APlayerCardState>(PlayerState);
+
+	if (CardState != nullptr) {
+		UE_LOG(FantasyHolic, Log, TEXT("Cast Success: APlayerCardState"));
+	}
+
 	DelGetThree.BindUFunction(this, FName("CreateGetsEvent"));
 }
 
 void AMainPlayerController::Tick(float DeltaSeconds)
 {
-	if (LockCUsing) {
+	if (!LockCUsing) {
 		if (isDraw) {
+			UE_LOG(FantasyHolic, Log, TEXT("is Draw: %d"), isDraw);
 			DrawRandomCard();
 			isDraw = false;
 			isUse = true;
@@ -35,6 +38,10 @@ void AMainPlayerController::Tick(float DeltaSeconds)
 	}
 	else {
 		if (!isDraw) isDraw = true;
+	}
+
+	if (WasInputKeyJustPressed(EKeys::N)) {
+		CardState->DebugSlotsLists();
 	}
 }
 
@@ -83,12 +90,15 @@ void AMainPlayerController::GetCards() {
 
 void AMainPlayerController::DrawRandomCard() {
 	int32 random = FMath::RandRange(1, CardState->Total);
+	UE_LOG(FantasyHolic, Log, TEXT("Random Card: %d"), random);
 	int32 cover = 0;
 	for (int32 i = 0; i < CardState->CardLists.Num(); i++) {
-		cover += CardState->CardLists[i];
+		cover = CardState->ArrayAt(i) + cover;
+		UE_LOG(FantasyHolic, Log, TEXT("Coverage: %d"), cover);
 		if (random <= cover) {
 			ACardRPGGameModeBase* gamemode = Cast<ACardRPGGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 			CurCard = gamemode->CardAt(i);
+			UE_LOG(FantasyHolic, Log, TEXT("Cur Card Setting : %s"), &CurCard);
 			AMainCharacter* character = Cast<AMainCharacter>(GetCharacter());
 			if (character) {
 				character->SkillCode = gamemode->GetCardCode(CurCard);
@@ -99,8 +109,12 @@ void AMainPlayerController::DrawRandomCard() {
 }
 
 void AMainPlayerController::GetNewCards() {
+	int32 last = Cast<ACardRPGGameModeBase>(GetWorld()->GetAuthGameMode())->GetCardsNum();
+	LockCUsing = false;
+	UE_LOG(FantasyHolic, Log, TEXT("last Index : %d"), last);
+
 	for (int32 i = 0; i < 3; i++) {
-		gatheredCard[i] = FMath::RandRange(0, CardState->CardLists.Last());
+		gatheredCard[i] = FMath::RandRange(0, last-1);
 		CardState->AddCard(gatheredCard[i]);
 	}
 }
@@ -113,7 +127,7 @@ void AMainPlayerController::CreateGetsEvent() {
 	if (Popup != nullptr) {
 		SetPause(true);
 		SetShowMouseCursor(true);
-
+		GetNewCards();
 		Popup->AddToViewport(0);
 	}
 }
