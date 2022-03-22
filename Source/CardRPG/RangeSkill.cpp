@@ -4,6 +4,7 @@
 #include "RangeSkill.h"
 #include "Components/BoxComponent.h"
 #include "BlueRush.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
@@ -21,6 +22,8 @@ ARangeSkill::ARangeSkill()
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
+
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ARangeSkill::OnOverlapBegin);
 	InitialLifeSpan = 1.0f;
 	
 }
@@ -49,5 +52,15 @@ void ARangeSkill::Tick(float DeltaTime)
     Location +=GetActorForwardVector()*Speed*DeltaTime;
     
     SetActorLocation(Location);
+}
+
+void ARangeSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, 10, NULL, GetOwner(), NULL);
+	}
+
 }
 

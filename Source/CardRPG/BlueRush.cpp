@@ -3,6 +3,7 @@
 
 #include "BlueRush.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
@@ -15,6 +16,7 @@ ABlueRush::ABlueRush()
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 	RootComponent = CollisionComp;
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &ABlueRush::OnOverlapBegin);
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Skill_TeleCharge/P_Skill_Telecharge_Ice_Impact_02.P_Skill_Telecharge_Ice_Impact_02'"));
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
@@ -35,5 +37,13 @@ void ABlueRush::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ABlueRush::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, 10, NULL, GetOwner(), NULL);
+	}
 }
 
