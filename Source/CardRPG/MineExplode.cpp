@@ -22,6 +22,8 @@ AMineExplode::AMineExplode()
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
 
+	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AMineExplode::OnOverlapBegin);
+
 	InitialLifeSpan = 1.5f;
 	
 
@@ -40,5 +42,14 @@ void AMineExplode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AMineExplode::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+
+	if (OtherActor && (OtherActor != this) && OtherComp)
+	{
+			UGameplayStatics::ApplyDamage(OtherActor, 10, NULL, GetOwner(), NULL);
+	}
 }
 
