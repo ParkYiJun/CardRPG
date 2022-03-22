@@ -46,6 +46,12 @@ public:
 		TSubclassOf<UUserWidget> LobbyUI;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<UUserWidget> MainUI;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		float SBGM;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		float SPSoundEffect;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		float SMSoundEffect;
 
 	FORCEINLINE int32 GetCardsNum() { return this->CardNames.Num(); }
 	FORCEINLINE void SetMainUI() { ChangeMenuWidget(MainUI); }
