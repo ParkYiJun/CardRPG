@@ -30,6 +30,7 @@ bool APlayerCardState::UseCard(int32 index) {
 			CardLists[index] = 0;
 			return false;
 		}
+		SetTotalCards();
 	}
 	return true;
 }

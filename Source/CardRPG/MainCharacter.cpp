@@ -379,14 +379,14 @@ void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
 		Shield();
 		break;
 	case 107:
-		RangeSkill();
+		RangeSkill();//Blue Rush
 		break;
 	case 108:
 		Teleport();
 		break;
 	case 109: //ice_explosion
 		break;
-	case 110: //Blue Rush
+	case 110: //electoronic Shock
 		break;
 	default:
 		break;
