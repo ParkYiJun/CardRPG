@@ -50,6 +50,8 @@ void AMainPlayerController::SetupInputComponent()
 	Super::SetupInputComponent();
 
 	InputComponent->BindAction(TEXT("Slots"), EInputEvent::IE_Pressed, this, &AMainPlayerController::OpeningCardList);
+	InputComponent->BindAction(TEXT("CardSkill"), EInputEvent::IE_Pressed, this, &AMainPlayerController::UseACard);
+	InputComponent->BindAction(TEXT("CardSkill"), EInputEvent::IE_Released, this, &AMainPlayerController::UseACard_R);
 	//InputComponent->BindAction(TEXT("X"), EInputEvent::IE_Pressed, this, &AMainPlayerController::ClosingPopups);
 }
 
@@ -102,6 +104,8 @@ void AMainPlayerController::DrawRandomCard() {
 			AMainCharacter* character = Cast<AMainCharacter>(GetCharacter());
 			if (character) {
 				character->SkillCode = gamemode->GetCardCode(CurCard);
+				UE_LOG(FantasyHolic, Log, TEXT("Card Code: %d"), gamemode->GetCardCode(CurCard));
+				cardIndex = i;
 			}
 			break;
 		}
@@ -116,6 +120,22 @@ void AMainPlayerController::GetNewCards() {
 	for (int32 i = 0; i < 3; i++) {
 		gatheredCard[i] = FMath::RandRange(0, last-1);
 		CardState->AddCard(gatheredCard[i]);
+	}
+}
+
+void AMainPlayerController::UseACard() {
+	AMainCharacter* character = Cast<AMainCharacter>(GetCharacter());
+	if (character) {
+		if (CardState->UseCard(cardIndex)) {
+			character->UseSkill();
+		}
+	}
+}
+
+void AMainPlayerController::UseACard_R() {
+	AMainCharacter* character = Cast<AMainCharacter>(GetCharacter());
+	if (character) {
+		character->UseSkill_R();
 	}
 }
 

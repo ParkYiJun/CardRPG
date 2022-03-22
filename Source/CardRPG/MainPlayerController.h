@@ -45,6 +45,10 @@ protected:
 		void ClosingPopups();
 	UFUNCTION()
 		void GetCards();
+	UFUNCTION()
+		void UseACard();
+	UFUNCTION()
+		void UseACard_R();
 
 	UFUNCTION(BlueprintCallable, Category = "Card Skill")
 		void DrawRandomCard();
