@@ -42,7 +42,6 @@
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Components/WidgetComponent.h"
 #include "UObject/ConstructorHelpers.h"
-#include "healthBar.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
@@ -52,8 +51,6 @@
 
 // Sets default values
 AMainCharacter::AMainCharacter() :	
-	health(max_health),
-	widget_component(CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthValue"))),
 	right_fist_collision_box(CreateDefaultSubobject<UBoxComponent>(TEXT("RightFistCollisionBox")))
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -118,17 +115,6 @@ AMainCharacter::AMainCharacter() :
 
 	setup_stimulus();
 
-	if (widget_component)
-	{
-		widget_component->SetupAttachment(RootComponent);
-		widget_component->SetWidgetSpace(EWidgetSpace::Screen);
-		widget_component->SetRelativeLocation(FVector(0.0f, 0.0f, 85.0f));
-		static ConstructorHelpers::FClassFinder<UUserWidget> widget_class(TEXT("/Game/UI/healthBar_BP"));
-		if (widget_class.Succeeded())
-		{
-			widget_component->SetWidgetClass(widget_class.Class);
-		}
-	}
 	if (right_fist_collision_box)
 	{
 		FVector const extent(5.0f);
@@ -189,30 +175,10 @@ void AMainCharacter::PostInitializeComponents()
 
 }
 
-float AMainCharacter::get_health() const
-{
-	return health;
-}
-
-float AMainCharacter::get_max_health() const
-{
-	return max_health;
-}
-
-void AMainCharacter::set_health(float const new_health)
-{
-	health = new_health;
-}
-
 // Called every frame
 void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	auto const uw = Cast<UhealthBar>(widget_component->GetUserWidgetObject());
-	if (uw)
-	{
-		uw->set_bar_value_percent(health / max_health);
-	}
 
 	if (CursorToWorld != nullptr)
 	{
