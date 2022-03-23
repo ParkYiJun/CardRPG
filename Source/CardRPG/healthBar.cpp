@@ -16,6 +16,16 @@ void UhealthBar::NativeConstruct() {
 	}
 
 
+	class APlayerController* P_Controller = GetOwningPlayer();
+	if (P_Controller) {
+		class ASpidering* spidering = Cast<ASpidering>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		if (spidering) {
+			if (HP_XP)
+				BindHp(spidering->Stats);
+			else
+				BindXp(spidering->Stats);
+		}
+	}
 	if (HP_XP)
 		UpdateHP();
 	else

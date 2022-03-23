@@ -36,6 +36,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		class UStatComponent* Stats;
 
+	UPROPERTY()
+		bool IsDead = false;
+
 public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
