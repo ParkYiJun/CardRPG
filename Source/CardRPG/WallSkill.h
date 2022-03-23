@@ -25,6 +25,11 @@ public:
 
 	UPROPERTY()
 		class AActor* GetOtherActor;
+	UPROPERTY(VisibleAnywhere)
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY(VisibleAnywhere)
+		class USoundBase* EffectSound;
 
 
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }

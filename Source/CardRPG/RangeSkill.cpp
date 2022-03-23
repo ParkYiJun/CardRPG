@@ -6,6 +6,8 @@
 #include "BlueRush.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 
 // Sets default values
 ARangeSkill::ARangeSkill()
@@ -17,6 +19,17 @@ ARangeSkill::ARangeSkill()
 	CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	CollisionComp->CanCharacterStepUpOn = ECB_No;
 	RootComponent = CollisionComp;
+
+	AudioComponent=CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-12.SE-12'"));
+	if (EF.Succeeded())
+	{
+	EffectSound=EF.Object;
+	}
+	//AudioComponent->SetSound(EffectSound);
+	//AudioComponent->Play();
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Skill_TeleCharge/P_Skill_Telecharge_Ice_Proj_03.P_Skill_Telecharge_Ice_Proj_03'"));
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
@@ -32,6 +45,10 @@ ARangeSkill::ARangeSkill()
 void ARangeSkill::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->Play();
+
 	FTimerHandle WaitHandle;
         float WaitTime=1.0f; //시간을 설정하고
         GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()

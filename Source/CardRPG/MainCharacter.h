@@ -53,6 +53,7 @@ public:
 	void Attack();
 	void UseSkill();
 	void UseSkill_R();
+	void BlueRush();
 	void Rush();
 	void WallSkill();
 	void WallSkillOn();
@@ -65,8 +66,10 @@ public:
 	void GenerateXp();
 	void ResetWalkSpeed();
 	void DroneAttack();
+	void IceExplosion();
 	void Dead();
 	void OnInteract();
+
 
 public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -159,6 +162,18 @@ private:
 public:
 	UPROPERTY()
 		bool IsImmune=false;
+
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+		class USoundBase* AttackedSound;
+
+	UPROPERTY()
+		class USoundBase* FireReadySound;
+
+	UPROPERTY()
+		class USoundBase* RollSound;
 
 
 

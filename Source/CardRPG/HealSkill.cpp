@@ -5,7 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 // Sets default values
 AHealSkill::AHealSkill()
 {
@@ -20,6 +21,15 @@ AHealSkill::AHealSkill()
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
 
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-14.SE-14'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("HealSkill"));
 	InitialLifeSpan = 3.0f;
 }
@@ -28,7 +38,8 @@ AHealSkill::AHealSkill()
 void AHealSkill::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->Play();
 }
 
 // Called every frame

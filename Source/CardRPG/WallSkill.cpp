@@ -8,6 +8,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "MainCharacter.h"
 #include "StatComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 
 
 // Sets default values
@@ -30,6 +32,16 @@ AWallSkill::AWallSkill()
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AWallSkill::OnOverlapBegin);
 	CollisionComp->OnComponentEndOverlap.AddDynamic(this,&AWallSkill::OnOverlapEnd);
 	UE_LOG(LogTemp, Warning, TEXT("Created!"));
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-10.SE-10'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
+	//AudioComponent->SetSound(EffectSound);
+	//AudioComponent->Play()
 	InitialLifeSpan=7.0f;
 }
 
@@ -61,7 +73,9 @@ void AWallSkill::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class A
 void AWallSkill::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->SetVolumeMultiplier(10000.0f);
+	AudioComponent->Play();
 }
 
 // Called every frame

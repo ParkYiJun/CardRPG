@@ -6,6 +6,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainCharacter.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 // Sets default values
 AShieldSkill::AShieldSkill()
 {
@@ -22,14 +24,28 @@ AShieldSkill::AShieldSkill()
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
 
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-15.SE-15'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
+	//AudioComponent->SetSound(EffectSound);
+	//AudioComponent->Play()
+
 	UE_LOG(LogTemp, Warning, TEXT("HealSkill"));
 	InitialLifeSpan = 4.5f;
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+
 }
 
 // Called when the game starts or when spawned
 void AShieldSkill::BeginPlay()
 {
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->Play();
 	MainCharacter->IsImmune=true;
 	Super::BeginPlay();
 	SetActorScale3D(FVector(0.3, 0.3, 0.8));

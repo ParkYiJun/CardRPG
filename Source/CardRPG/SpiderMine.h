@@ -25,6 +25,11 @@ public:
 
 	UPROPERTY()
 		class AMainCharacter* MainCharacter;
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+		class USoundBase* EffectSound;
 
 
 
