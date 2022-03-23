@@ -15,6 +15,7 @@ class CARDRPG_API ASpidering : public ACardRPG_CharacterBase
 
 public:
 	// Sets default values for this character's properties
+
 	ASpidering();
 
 protected:
@@ -31,10 +32,6 @@ public:
 	void melee_attack();
 
 	UAnimMontage* get_montage() const;
-
-	float get_health() const;
-	float get_max_health() const;
-	void set_health(float const new_health);
 
 	UPROPERTY(EditDefaultsOnly)
 		class UStatComponent* Stats;

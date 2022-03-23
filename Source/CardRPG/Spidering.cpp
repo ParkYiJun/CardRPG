@@ -70,11 +70,6 @@ void ASpidering::on_attack_overlap_end(UPrimitiveComponent* const overlapped_com
 void ASpidering::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	auto const uw = Cast<UhealthBar>(widget_component->GetUserWidgetObject());
-	if (uw)
-	{
-		uw->set_bar_value_percent(health / max_health);
-	}
 
 }
 
@@ -106,17 +101,3 @@ UAnimMontage* ASpidering::get_montage() const
 	return montage;
 }
 
-float ASpidering::get_health() const
-{
-	return health;
-}
-
-float ASpidering::get_max_health() const
-{
-	return max_health;
-}
-
-void ASpidering::set_health(float const new_health)
-{
-	health = new_health;
-}

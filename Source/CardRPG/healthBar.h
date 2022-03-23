@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Runtime/UMG/Public/Components/ProgressBar.h"
+#include "Components/Image.h"
 #include "healthBar.generated.h"
 
 /**
@@ -14,10 +14,25 @@ UCLASS()
 class CARDRPG_API UhealthBar : public UUserWidget
 {
 	GENERATED_BODY()
-public:
-	void NativeConstruct() override;
-	void set_bar_value_percent(float const value);
 protected:
-	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
-	UProgressBar* health_value = nullptr;
+	virtual void NativeConstruct() override;
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Target")
+		bool HP_XP;
+	void BindHp(class UStatComponent* StatComp);
+	void BindXp(class UStatComponent* StatComp);
+	void UpdateHP();
+	void UpdateXP();
+
+private:
+	TWeakObjectPtr<class UStatComponent> CurrentStatComp;
+	float gaugeWidth = 0.0f;
+	class UCanvasPanelSlot* GaugeSlot;
+	
+	void UpdateGauge(float width);
+	
+	UPROPERTY(meta = (BindWidget))
+		class UImage* Gauge;
+
 };
