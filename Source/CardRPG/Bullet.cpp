@@ -7,7 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "StatComponent.h"
-
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 // Sets default values
 ABullet::ABullet()
 {

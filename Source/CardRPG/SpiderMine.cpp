@@ -6,6 +6,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainCharacter.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "MineExplode.h"
 
 // Sets default values
@@ -25,6 +27,17 @@ ASpiderMine::ASpiderMine()
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
 
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-7.SE-7'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
+	//AudioComponent->SetSound(EffectSound);
+	//AudioComponent->Play();
+
 	InitialLifeSpan = 3.1f;
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
@@ -40,6 +53,8 @@ void ASpiderMine::BeginPlay()
 		{
 			GetWorld()->SpawnActor<AMineExplode>(GetActorLocation(), FRotator(0, 0, 0));
 		}), WaitTime, false);
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->Play();
 
 
 	

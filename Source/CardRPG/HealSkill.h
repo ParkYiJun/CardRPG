@@ -20,6 +20,12 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class UParticleSystemComponent* PSC;
 
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+		class USoundBase* EffectSound;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

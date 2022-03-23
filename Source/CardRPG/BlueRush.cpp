@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 
 // Sets default values
 ABlueRush::ABlueRush()
@@ -22,6 +24,16 @@ ABlueRush::ABlueRush()
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-13.SE-13'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
+
 	InitialLifeSpan = 1.0f;
 }
 
@@ -29,6 +41,8 @@ ABlueRush::ABlueRush()
 void ABlueRush::BeginPlay()
 {
 	Super::BeginPlay();
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->Play();
 	
 }
 
