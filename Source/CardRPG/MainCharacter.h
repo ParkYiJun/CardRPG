@@ -191,12 +191,6 @@ public:
 	UPROPERTY()
 		bool IsDead = false;
 
-
-
-private:
-	float Health = 0;
-	float DHealth = 100;
-
 private:
 	class UWidgetComponent* widget_component;
 	float const max_health = 100.0f;

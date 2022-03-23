@@ -36,6 +36,12 @@ public:
 	float get_max_health() const;
 	void set_health(float const new_health);
 
+	UPROPERTY(EditDefaultsOnly)
+		class UStatComponent* Stats;
+
+public:
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 private:
 	class UWidgetComponent* widget_component;
 	float const max_health = 100;

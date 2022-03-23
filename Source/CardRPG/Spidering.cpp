@@ -21,6 +21,7 @@ ASpidering::ASpidering() :
 	health(max_health),
 	widget_component(CreateDefaultSubobject<UWidgetComponent>(TEXT("healthBar")))
 {
+	Stats = CreateDefaultSubobject<UStatComponent>(TEXT("STATS"));
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
@@ -75,6 +76,14 @@ void ASpidering::Tick(float DeltaTime)
 		uw->set_bar_value_percent(health / max_health);
 	}
 
+}
+
+float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+
+	Stats->OnAttacked(DamageAmount);
+
+	return DamageAmount;
 }
 
 // Called to bind functionality to input
