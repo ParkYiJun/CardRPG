@@ -38,3 +38,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UTexture2D* Image;
 };
+
+USTRUCT(Atomic, BlueprintType)
+struct FBGMSound : public FTableRowBase 
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USoundCue* BGMCue;
+};
