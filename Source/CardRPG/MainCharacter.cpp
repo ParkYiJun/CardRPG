@@ -25,6 +25,7 @@
 #include "MyUserWidget.h"
 #include "HealSkill.h"
 #include "ShieldSkill.h"
+#include "IceSkill.h"
 #include "CardDropActor.h"
 #include "InGameHud.h"
 #include "HardAttackSkill.h"
@@ -47,6 +48,8 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Animation/AnimMontage.h"
 #include "Spidering.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 
 // Sets default values
@@ -64,6 +67,7 @@ AMainCharacter::AMainCharacter() :
 	IceSkillLocation= CreateDefaultSubobject<USceneComponent>(TEXT("ICESKILLLOCATION"));
 	TeleportLocation = CreateDefaultSubobject<USceneComponent>(TEXT("TELEPORTLOCATION"));
 	InteractionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("InteraactionBox"));
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
 
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	SpringArm->bUsePawnControlRotation=true;
@@ -74,7 +78,7 @@ AMainCharacter::AMainCharacter() :
 	IceSkillLocation->SetupAttachment(GetCapsuleComponent());
 	TeleportLocation->SetupAttachment(GetCapsuleComponent());
 	InteractionBox->SetupAttachment(RootComponent);
-
+	AudioComponent->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 350.0f;
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
 	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
@@ -90,6 +94,20 @@ AMainCharacter::AMainCharacter() :
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SM(TEXT("SkeletalMesh'/Game/ParagonPhase/Characters/Heroes/Phase/Meshes/Phase_GDC.Phase_GDC'"));
 
 
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-5.SE-5'"));
+	if (EF.Succeeded())
+	{
+		AttackedSound = EF.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<USoundBase> FRS(TEXT("SoundWave'/Game/Resources/soundEffect/SE-29.SE-29'"));
+	if (FRS.Succeeded())
+	{
+		FireReadySound = FRS.Object;
+	}	static ConstructorHelpers::FObjectFinder<USoundBase> RS(TEXT("SoundWave'/Game/Resources/soundEffect/SE-43.SE-43'"));
+	if (RS.Succeeded())
+	{
+		RollSound = RS.Object;
+	}
 	if (SM.Succeeded())
 	{	
 		UE_LOG(LogTemp,Warning,TEXT("GetMesh Succeeded"));
@@ -249,7 +267,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Released,this, &AMainCharacter::WallSkillOn);
-	PlayerInputComponent->BindAction(TEXT("IceSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::RangeSkill);
+	PlayerInputComponent->BindAction(TEXT("IceSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::BlueRush);
 	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
 	//Interact Key
 	PlayerInputComponent->BindAction(TEXT("Interact"),EInputEvent::IE_Pressed,this, &AMainCharacter::OnInteract);
@@ -293,6 +311,8 @@ void AMainCharacter::Dodge()
 	if ((IsAttacking == false) && (IsSkillUsing == false))
 	{
 	    AnimInstance->PlayDodgeMontage();
+		AudioComponent->SetSound(RollSound);
+		AudioComponent->Play();
 	}
 	IsSkillUsing=true;
 
@@ -345,12 +365,13 @@ void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
 		Shield();
 		break;
 	case 107:
-		RangeSkill();//Blue Rush
+		BlueRush();//Blue Rush
 		break;
 	case 108:
 		Teleport();
 		break;
-	case 109: //ice_explosion
+	case 109:
+		IceExplosion();//ice_explosion
 		break;
 	case 110: //electoronic Shock
 		break;
@@ -365,6 +386,8 @@ void AMainCharacter::UseSkill_R() { //Binding Q Key Released
 	{
 	case 101:
 		WallSkillOn();
+		AudioComponent->SetSound(FireReadySound);
+		AudioComponent->Play();
 		break;
 	default:
 		break;
@@ -438,7 +461,7 @@ void AMainCharacter::WallSkillOn()
     GetWorld()->SpawnActor<AWallSkill>(ActorWorldLocation, SpawnRotation);
 }
 
-void AMainCharacter::RangeSkill()
+void AMainCharacter::BlueRush()
 {
 	if (IsSkillUsing)
 	{
@@ -579,6 +602,19 @@ void AMainCharacter::DroneAttack()
 	}
 }
 
+void AMainCharacter::IceExplosion()
+{
+	if (IsSkillUsing)
+	{
+		return;
+	}
+	AnimInstance->PlayWallSkillMontage();
+	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
+	GetWorld()->SpawnActor<AIceSkill>(CurrentLoc, FRotator(0, 0, 0));
+	IsSkillUsing = true;
+
+}
+
 void AMainCharacter::Dead()
 {
 	IsSkillUsing = true;
@@ -610,6 +646,8 @@ float AMainCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& 
 	GetWorld()->SpawnActor<ADamageTextActor>(GetActorLocation(), FRotator(0, 0, 0));
 	Stats->OnAttacked(DamageAmount);
 	AnimInstance->PlayAttackedMontage();
+	AudioComponent->SetSound(AttackedSound);
+	AudioComponent->Play();
 	if (Stats->GetHp()<=0 && IsDead==false)
 	{
 		Dead();

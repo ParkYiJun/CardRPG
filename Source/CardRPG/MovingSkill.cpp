@@ -6,6 +6,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainCharacter.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 // Sets default values
 AMovingSkill::AMovingSkill()
 {
@@ -21,6 +23,15 @@ AMovingSkill::AMovingSkill()
 	PSC = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
 	PSC->SetTemplate(PS.Object);
 	PSC->SetupAttachment(CollisionComp);
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-5.SE-5'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
+	//AudioComponent->SetSound(EffectSound);
+	//AudioComponent->Play()
 
 	InitialLifeSpan = 10.0f;
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
@@ -31,7 +42,8 @@ void AMovingSkill::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorScale3D(FVector(0.3,0.3,0.3));
-	
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->Play();
 }
 
 // Called every frame

@@ -4,7 +4,8 @@
 #include "Teleport.h"
 #include "Components/BoxComponent.h"
 #include "Particles/ParticleSystemComponent.h"
-
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 // Sets default values
 ATeleport::ATeleport()
 {

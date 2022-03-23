@@ -8,6 +8,8 @@
 #include "MainCharacter.h"
 #include "StatComponent.h"
 #include "YelloRush.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 
 // Sets default values
 AYellowRushStart::AYellowRushStart()
@@ -29,12 +31,24 @@ AYellowRushStart::AYellowRushStart()
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AYellowRushStart::OnOverlapBegin);
 
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-12.SE-12'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
+	//AudioComponent->SetSound(EffectSound);
+	//AudioComponent->Play()
+
 }
 
 // Called when the game starts or when spawned
 void AYellowRushStart::BeginPlay()
 {
 	Super::BeginPlay();
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->Play();
 	FTimerHandle WaitHandle;
 	float WaitTime = 1.0f; 
 	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()

@@ -17,6 +17,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 		class UParticleSystemComponent* PSC;
+
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+		class USoundBase* EffectSound;
 	
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
 

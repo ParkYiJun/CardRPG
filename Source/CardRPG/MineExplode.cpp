@@ -5,7 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 // Sets default values
 AMineExplode::AMineExplode()
 {
@@ -24,6 +25,14 @@ AMineExplode::AMineExplode()
 
 	CollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AMineExplode::OnOverlapBegin);
 
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-8.SE-8'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
 	InitialLifeSpan = 1.5f;
 	
 
@@ -34,7 +43,9 @@ AMineExplode::AMineExplode()
 void AMineExplode::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->SetVolumeMultiplier(1000.0f);
+	AudioComponent->Play();
 }
 
 // Called every frame

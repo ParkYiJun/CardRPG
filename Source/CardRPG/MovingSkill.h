@@ -27,6 +27,11 @@ public:
 public:
 	UPROPERTY()
 		class AMainCharacter* MainCharacter;
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+		class USoundBase* EffectSound;
 
 protected:
 	// Called when the game starts or when spawned
