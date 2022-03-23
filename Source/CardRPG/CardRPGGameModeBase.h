@@ -28,6 +28,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UDataTable* CardDataTable;
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound Asset")
+		class USoundCue* Title_Sound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound Asset")
+		class USoundCue* Lobby_Sound;
+	UPROPERTY(EditDefaultsOnly, Category = "Sound Asset")
+		class UDataTable* Other_Sound;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Card Utilities")
 		int32 FindCard(FName name);
