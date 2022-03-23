@@ -15,6 +15,7 @@ class CARDRPG_API ASpidering : public ACardRPG_CharacterBase
 
 public:
 	// Sets default values for this character's properties
+
 	ASpidering();
 
 protected:
@@ -32,9 +33,14 @@ public:
 
 	UAnimMontage* get_montage() const;
 
-	float get_health() const;
-	float get_max_health() const;
-	void set_health(float const new_health);
+	UPROPERTY(EditDefaultsOnly)
+		class UStatComponent* Stats;
+
+	UPROPERTY()
+		bool IsDead = false;
+
+public:
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	class UWidgetComponent* widget_component;

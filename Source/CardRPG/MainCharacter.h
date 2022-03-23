@@ -30,11 +30,6 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-	float get_health() const;
-	float get_max_health() const;
-	void set_health(float const new_health);
-
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -206,16 +201,8 @@ public:
 	UPROPERTY()
 		bool IsDead = false;
 
-
-
-private:
-	float Health = 0;
-	float DHealth = 100;
-
 private:
 	class UWidgetComponent* widget_component;
-	float const max_health = 100.0f;
-	float health;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound", meta = (AllowPrivateAccess = "true"))
 	USoundBase* distraction_sound;   
@@ -226,7 +213,6 @@ private:
 
 	void setup_stimulus();
 
-	void on_attack();
 	void on_distract();
 
 	UFUNCTION()

@@ -143,11 +143,6 @@ AMainCharacter::AMainCharacter() :
 
 void AMainCharacter::on_attack_overlap_begin(UPrimitiveComponent* const overlapped_component, AActor* const other_actor, UPrimitiveComponent* other_component, int const other_body_index, bool const from_sweep, FHitResult const& sweep_result)
 {
-	if (ASpidering* const spidering = Cast<ASpidering>(other_actor))
-	{
-		float const new_health = spidering->get_health() - spidering->get_max_health() * 0.1f;
-		spidering->set_health(new_health);
-	}
 }
 
 void AMainCharacter::on_attack_overlap_end(UPrimitiveComponent* const overlapped_component, AActor* const other_actor, UPrimitiveComponent* other_component, int const other_body_index)

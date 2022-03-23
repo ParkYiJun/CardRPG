@@ -21,6 +21,7 @@ ASpidering::ASpidering() :
 	health(max_health),
 	widget_component(CreateDefaultSubobject<UWidgetComponent>(TEXT("healthBar")))
 {
+	Stats = CreateDefaultSubobject<UStatComponent>(TEXT("STATS"));
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
@@ -69,12 +70,15 @@ void ASpidering::on_attack_overlap_end(UPrimitiveComponent* const overlapped_com
 void ASpidering::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	auto const uw = Cast<UhealthBar>(widget_component->GetUserWidgetObject());
-	if (uw)
-	{
-		uw->set_bar_value_percent(health / max_health);
-	}
 
+}
+
+float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+
+	Stats->OnAttacked(DamageAmount);
+
+	return DamageAmount;
 }
 
 // Called to bind functionality to input
@@ -97,17 +101,3 @@ UAnimMontage* ASpidering::get_montage() const
 	return montage;
 }
 
-float ASpidering::get_health() const
-{
-	return health;
-}
-
-float ASpidering::get_max_health() const
-{
-	return max_health;
-}
-
-void ASpidering::set_health(float const new_health)
-{
-	health = new_health;
-}
