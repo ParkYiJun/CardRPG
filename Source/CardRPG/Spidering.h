@@ -31,6 +31,8 @@ public:
 
 	void melee_attack();
 
+	void Dead();
+
 	UAnimMontage* get_montage() const;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -44,11 +46,12 @@ public:
 
 private:
 	class UWidgetComponent* widget_component;
-	float const max_health = 100;
-	float health;
+
+	UPROPERTY()
+		class USpideringAnimInstance* AnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* montage;
+		class UAnimMontage* montage;
 
 	UFUNCTION()
 		void on_attack_overlap_begin(
@@ -66,4 +69,7 @@ private:
 			UPrimitiveComponent* other_component,
 			int const other_body_index);
 
+
+public:
+	FTimerHandle WaidHandleDead;
 };
