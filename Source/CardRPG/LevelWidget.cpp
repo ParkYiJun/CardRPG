@@ -27,7 +27,7 @@ void ULevelWidget::BindLevel(class UStatComponent* PStats)
 void ULevelWidget::UpdateLevel() {
 	if (CurrentStatComp.IsValid()) {
 		UE_LOG(LogTemp, Warning, TEXT("Update Level: %d"), CurrentStatComp->GetLevel());
-		FString lvtext = FString::Printf(TEXT("Lv. %02d"), CurrentStatComp->GetLevel());
+		FString lvtext = FString::Printf(TEXT("%02d"), CurrentStatComp->GetLevel());
 		LevelText->SetText(FText::FromString(lvtext));
 	}
 }
