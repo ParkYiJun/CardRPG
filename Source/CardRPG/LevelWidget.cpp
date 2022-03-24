@@ -11,15 +11,15 @@ void ULevelWidget::NativeConstruct() {
 
 	class AMainCharacter* player = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	if (player) {
-		BindLevel(player->Stats);
+//		BindLevel(player->Stats);
 	}
 }
 
-void ULevelWidget::BindLevel(UStatComponent* PStats)
-{
-	CurrentStatComp = PStats;
-	CurrentStatComp->OnXpChanged.AddUObject(this, &ULevelWidget::UpdateLevel);
-}
+//void ULevelWidget::BindLevel(UStatComponent* PStats)
+//{
+//	CurrentStatComp = PStats;
+//	CurrentStatComp->OnXpChanged.AddUObject(this, &ULevelWidget::UpdateLevel);
+//}
 
 void ULevelWidget::UpdateLevel() {
 	if (CurrentStatComp.IsValid()) {

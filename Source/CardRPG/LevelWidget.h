@@ -18,7 +18,7 @@ class CARDRPG_API ULevelWidget : public UUserWidget
 
 public:
 
-	void BindLevel(UStatComponent* PStats);
+	//void BindLevel(UStatComponent* PStats);
 	
 private:
 	TWeakObjectPtr<class UStatComponent> CurrentStatComp;
