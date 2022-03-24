@@ -4,7 +4,6 @@
 #include "MyUserWidget.h"
 #include "StatComponent.h"
 #include "Components/CanvasPanelSlot.h"
-#include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainCharacter.h"
 
