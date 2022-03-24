@@ -15,10 +15,12 @@
 #include "MainCharacter.h"
 #include "StatComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "SpideringAnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ASpidering::ASpidering() :
-	health(max_health),
 	widget_component(CreateDefaultSubobject<UWidgetComponent>(TEXT("healthBar")))
 {
 	Stats = CreateDefaultSubobject<UStatComponent>(TEXT("STATS"));
@@ -75,9 +77,12 @@ void ASpidering::Tick(float DeltaTime)
 
 float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-
 	Stats->OnAttacked(DamageAmount);
-
+	if (Stats->GetHp() <= 0 && IsDead == false)
+	{
+		Dead();
+		IsDead = true;
+	}
 	return DamageAmount;
 }
 
@@ -101,3 +106,16 @@ UAnimMontage* ASpidering::get_montage() const
 	return montage;
 }
 
+void ASpidering::Dead()
+{
+	AnimInstance->PlayDeadMontage();
+	float WaitTime = 1.0;
+	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
+	{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	UE_LOG(LogTemp, Warning, TEXT("DEAD"));
+	GetCharacterMovement()->Deactivate();
+	GetMesh()->SetSimulatePhysics(true);
+	AnimInstance->StopSlotAnimation(0.1f, "DefaultSlot");
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}), WaitTime, false);
+}

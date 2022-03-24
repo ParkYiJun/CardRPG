@@ -4,6 +4,7 @@
 #include "healthBar.h"
 #include "StatComponent.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Kismet/GameplayStatics.h"
 #include "Spidering.h"
