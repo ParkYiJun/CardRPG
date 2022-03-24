@@ -63,6 +63,8 @@ public:
 	void Mine();
 	void Heal();
 	void Shield();
+	void ElectoronicShock();
+	void ElectoronicShockOn();
 	void GenerateXp();
 	void ResetWalkSpeed();
 	void DroneAttack();

@@ -17,6 +17,7 @@
 #include "WallSkill.h"
 #include "RangeSkill.h"
 #include "Teleport.h"
+#include "ShockSkill.h"
 #include "YellowRushStart.h"
 #include "FollowingDrone.h"
 #include "MovingSkill.h"
@@ -267,6 +268,10 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(TEXT("DroneAttack"), EInputEvent::IE_Pressed, this, &AMainCharacter::DroneAttack);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::WallSkill);
 	PlayerInputComponent->BindAction(TEXT("WallSkill"),EInputEvent::IE_Released,this, &AMainCharacter::WallSkillOn);
+	PlayerInputComponent->BindAction(TEXT("ElecSkill"), EInputEvent::IE_Pressed, this, &AMainCharacter::ElectoronicShock);
+	PlayerInputComponent->BindAction(TEXT("ElecSkill"), EInputEvent::IE_Released, this, &AMainCharacter::ElectoronicShockOn);
+	PlayerInputComponent->BindAction(TEXT("IceExplosion"),EInputEvent::IE_Pressed,this,&AMainCharacter::IceExplosion);
+	PlayerInputComponent->BindAction(TEXT("IceExplosion"),EInputEvent::IE_Pressed,this,&AMainCharacter::IceExplosion);
 	PlayerInputComponent->BindAction(TEXT("IceSkill"),EInputEvent::IE_Pressed,this, &AMainCharacter::BlueRush);
 	PlayerInputComponent->BindAction(TEXT("Teleport"),EInputEvent::IE_Pressed,this, &AMainCharacter::Teleport);
 	//Interact Key
@@ -422,15 +427,6 @@ void AMainCharacter::WallSkill()
 }
 void AMainCharacter::WallSkillOn()
 {
-
-/*
-			FHitResult TraceHitResult;
-			PC->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
-			FVector CursorFV = TraceHitResult.ImpactNormal;
-			FRotator CursorR = CursorFV.Rotation();
-			CursorToWorld->SetWorldLocation(TraceHitResult.Location);
-			CursorToWorld->SetWorldRotation(CursorR);
-*/
 	UE_LOG(LogTemp, Warning, TEXT("WALLSKILLON"));
 	if (IsSkillUsing)
 	{
@@ -560,6 +556,50 @@ void AMainCharacter::Shield()
 
 }
 
+void AMainCharacter::ElectoronicShock()
+{
+	UE_LOG(LogTemp, Warning, TEXT("WALLSKILL"));
+	if (IsSkillUsing)
+	{
+		return;
+	}
+	CursorToWorld->SetVisibility(true);
+	auto PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	PlayerController->SetMouseLocation(600, 300);
+}
+
+void AMainCharacter::ElectoronicShockOn()
+{
+	UE_LOG(LogTemp, Warning, TEXT("WALLSKILLON"));
+	if (IsSkillUsing)
+	{
+		return;
+	}
+	IsSkillUsing = true;
+	CursorToWorld->SetVisibility(false);
+	FVector WorldLocation;
+	FVector WorldDirection;
+	float DistanceAboveGround = CursorToWorld->GetComponentLocation().Z;
+	//float DistanceAboveGround=50.0f;
+
+	auto PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+
+	FVector PlaneOrigin(0.0f, 0.0f, DistanceAboveGround);
+
+	FVector ActorWorldLocation = FMath::LinePlaneIntersection(
+		WorldLocation,
+		WorldLocation + WorldDirection,
+		PlaneOrigin,
+		FVector::UpVector);
+
+
+	FRotator SpawnRotation = GetCapsuleComponent()->GetComponentRotation();
+
+	AnimInstance->PlayWallSkillMontage();
+	GetWorld()->SpawnActor<AShockSkill>(ActorWorldLocation, SpawnRotation);
+}
+
 #pragma endregion
 
 void AMainCharacter::GenerateXp()
@@ -609,7 +649,7 @@ void AMainCharacter::IceExplosion()
 		return;
 	}
 	AnimInstance->PlayWallSkillMontage();
-	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
+	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, 0);
 	GetWorld()->SpawnActor<AIceSkill>(CurrentLoc, FRotator(0, 0, 0));
 	IsSkillUsing = true;
 
