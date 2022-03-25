@@ -14,21 +14,21 @@ void UMyUserWidget::NativeConstruct() {
 		UE_LOG(LogTemp, Warning, TEXT("Width: %f"), gaugeWidth);
 	}
 
-
-	class APlayerController* P_Controller = GetOwningPlayer();
-	if (P_Controller) {
+	if (CurrentStatComp == nullptr)
+	{
 		class AMainCharacter* player = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 		if (player) {
-			if (HP_XP)
+			if (HP_XP) {
 				BindHp(player->Stats);
-			else
+				UpdateHP();
+			}
+			else {
 				BindXp(player->Stats);
+				UpdateXP();
+			}
 		}
+		
 	}
-	if (HP_XP)
-		UpdateHP();
-	else
-		UpdateXP();
 }
 
 void UMyUserWidget::BindHp(UStatComponent* StatComp)
@@ -45,7 +45,7 @@ void UMyUserWidget::BindXp(UStatComponent* StatComp)
 
 void UMyUserWidget::UpdateHP()
 {
-	if (CurrentStatComp.IsValid())
+	if (CurrentStatComp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UPDATEHP"));
 		
@@ -55,7 +55,7 @@ void UMyUserWidget::UpdateHP()
 }
 void UMyUserWidget::UpdateXP()
 {
-	if (CurrentStatComp.IsValid())
+	if (CurrentStatComp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UPDATEHP"));
 

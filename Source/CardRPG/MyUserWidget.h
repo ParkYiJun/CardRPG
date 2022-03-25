@@ -26,7 +26,8 @@ public:
 	void UpdateXP();
 
 private:
-	TWeakObjectPtr<class UStatComponent> CurrentStatComp;
+	UPROPERTY()
+		class UStatComponent* CurrentStatComp;
 	float gaugeWidth = 0.0f;
 	class UCanvasPanelSlot* GaugeSlot;
 	
