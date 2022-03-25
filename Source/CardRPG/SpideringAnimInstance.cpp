@@ -8,10 +8,10 @@
 
 USpideringAnimInstance::USpideringAnimInstance()
 {
-	static ConstructorHelpers::FObjectFinder<UAnimMontage>DM(TEXT("AnimMontage'/Game/InfinityBladeAdversaries/AI/Animation/Spidering/Spidering_Death.Spidering_Death'"));
+	static ConstructorHelpers::FObjectFinder<UAnimMontage>DM(TEXT("AnimMontage'/Game/InfinityBladeAdversaries/AI/Spidering_Death.Spidering_Death'"));
 	if (DM.Succeeded())
 	{
-		DeadMontage = DM.Object;
+		DeadMontage1 = DM.Object;
 	}
 
 }
@@ -31,9 +31,9 @@ void USpideringAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void USpideringAnimInstance::PlayDeadMontage()
 {
-	if (!Montage_IsPlaying(DeadMontage))
+	if (!Montage_IsPlaying(DeadMontage1))
 	{
-		Montage_Play(DeadMontage, 1.0f);
+		Montage_Play(DeadMontage1, 1.0f);
 	}
 
 }

@@ -68,11 +68,32 @@ void ASpidering::on_attack_overlap_end(UPrimitiveComponent* const overlapped_com
 {
 }
 
+void ASpidering::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AnimInstance = Cast<USpideringAnimInstance>(GetMesh()->GetAnimInstance());
+
+}
+
 // Called every frame
 void ASpidering::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ASpidering::Dead()
+{
+	AnimInstance->PlayDeadMontage();
+	float WaitTime = 1.0;
+	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
+	{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	UE_LOG(LogTemp, Warning, TEXT("DEAD"));
+	GetCharacterMovement()->Deactivate();
+	GetMesh()->SetSimulatePhysics(true);
+	AnimInstance->StopSlotAnimation(0.1f, "DefaultSlot");
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}), WaitTime, false);
 }
 
 float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -106,16 +127,3 @@ UAnimMontage* ASpidering::get_montage() const
 	return montage;
 }
 
-void ASpidering::Dead()
-{
-	AnimInstance->PlayDeadMontage();
-	float WaitTime = 1.0;
-	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
-	{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	UE_LOG(LogTemp, Warning, TEXT("DEAD"));
-	GetCharacterMovement()->Deactivate();
-	GetMesh()->SetSimulatePhysics(true);
-	AnimInstance->StopSlotAnimation(0.1f, "DefaultSlot");
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	}), WaitTime, false);
-}

@@ -27,7 +27,7 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-		UAnimMontage* DeadMontage;
+		UAnimMontage* DeadMontage1;
 
 public:
 	FOnAttackHit OnAttackHit;

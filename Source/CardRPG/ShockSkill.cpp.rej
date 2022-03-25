@@ -1,0 +1,9 @@
+diff a/Source/CardRPG/ShockSkill.cpp b/Source/CardRPG/ShockSkill.cpp	(rejected hunks)
+@@ -52,7 +52,6 @@
+ 			{
+ 
+ 				UE_LOG(LogTemp, Warning, TEXT("DotF"));
+-				UGameplayStatics::ApplyDamage(GetOtherActor, 10, NULL, GetOwner(), NULL);
+ 				UGameplayStatics::ApplyDamage(GetOtherActor, 80, NULL, GetOwner(), NULL);
+ 
+ 
