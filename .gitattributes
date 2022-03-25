@@ -12,3 +12,5 @@ Content/MegaGameMusicCollection/FantasyAdventureMusicPack/Wavs/Journey_into_Fog_
 Content/MegaGameMusicCollection/MedievalAdventureAncient/Wavs/Dramatic_Track.uasset filter=lfs diff=lfs merge=lfs -text
 Content/MegaGameMusicCollection/AdventureGameMusicPack/Wavs/A_Long_Journey__looped_.uasset filter=lfs diff=lfs merge=lfs -text
 Content/MegaGameMusicCollection/FantasyAdventureMusicPack/Wavs/Ice_and_Fire.uasset filter=lfs diff=lfs merge=lfs -text
+Content/Sound/DarkMystery_StartMap.uasset filter=lfs diff=lfs merge=lfs -text
+Content/Sound/DarkMystery_StartMap.wav filter=lfs diff=lfs merge=lfs -text
