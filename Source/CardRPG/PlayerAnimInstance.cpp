@@ -105,6 +105,7 @@ void UPlayerAnimInstance::PlayRushSkillMontage()
 
 void UPlayerAnimInstance::PlayDeadMontage()
 {
+	Montage_Play(DeadMontage, 1.0f);
 	if(!Montage_IsPlaying(DeadMontage))
 	{
 		Montage_Play(DeadMontage, 1.0f);

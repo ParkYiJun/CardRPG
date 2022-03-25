@@ -52,7 +52,7 @@ void AShockSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 			{
 
 				UE_LOG(LogTemp, Warning, TEXT("DotF"));
-				UGameplayStatics::ApplyDamage(GetOtherActor, 10, NULL, GetOwner(), NULL);
+				UGameplayStatics::ApplyDamage(GetOtherActor, 80, NULL, GetOwner(), NULL);
 
 
 			}), WaitTime, true);
@@ -70,9 +70,9 @@ void AShockSkill::BeginPlay()
 {
 	Super::BeginPlay();
 	Super::BeginPlay();
-	AudioComponent->SetSound(EffectSound);
-	AudioComponent->SetVolumeMultiplier(10000.0f);
-	AudioComponent->Play();
+	//AudioComponent->SetSound(EffectSound);
+	//AudioComponent->SetVolumeMultiplier(10000.0f);
+	//AudioComponent->Play();
 }
 
 // Called every frame
