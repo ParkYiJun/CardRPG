@@ -48,6 +48,13 @@ public:
 		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 	UFUNCTION(BlueprintCallable, Category = "Widget Utilities")
 		void GotoLobby();
+	UFUNCTION(BlueprintCallable, Category = "Sound Utilities")
+		class USoundCue* GetTitleSound();
+	UFUNCTION(BlueprintCallable, Category = "Sound Utilities")
+		class USoundCue* GetLobbySound();
+	UFUNCTION(BlueprintCallable, Category = "Sound Utilities")
+		class USoundCue* GetSound(int32 SoundCase);
+
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<UUserWidget> TitleUI;

@@ -84,3 +84,20 @@ void ACardRPGGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetCl
 void ACardRPGGameModeBase::GotoLobby(){
 	ChangeMenuWidget(LobbyUI);
 }
+
+USoundCue* ACardRPGGameModeBase::GetTitleSound()
+{
+	return Title_Sound;
+}
+
+USoundCue* ACardRPGGameModeBase::GetLobbySound()
+{
+	return Lobby_Sound;
+}
+
+USoundCue* ACardRPGGameModeBase::GetSound(int32 SoundCase)
+{
+	FBGMSound bgm = *(Other_Sound->FindRow<FBGMSound>(FName(*FString::FromInt(SoundCase)), FString::Printf(TEXT("SoundCase: %d"), SoundCase)));
+	return bgm.BGMCue;
+}
+
