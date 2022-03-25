@@ -5,6 +5,8 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
+#include "StatComponent.h"
+#include "MainCharacter.h"
 #include "Sound/SoundBase.h"
 #include "Particles/ParticleSystemComponent.h"
 // Sets default values

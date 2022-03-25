@@ -52,11 +52,8 @@ void AShockSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 			{
 
 				UE_LOG(LogTemp, Warning, TEXT("DotF"));
-<<<<<<< HEAD
 				UGameplayStatics::ApplyDamage(GetOtherActor, 80, NULL, GetOwner(), NULL);
-=======
-				UGameplayStatics::ApplyDamage(GetOtherActor, 90, NULL, GetOwner(), NULL);
->>>>>>> main
+
 
 
 			}), WaitTime, true);
