@@ -44,6 +44,8 @@ private:
 	bool IsOverlapped=false;
 
 	FTimerHandle WaitHandle;
+
+	int32 Damage;
 	
 protected:
 	// Called when the game starts or when spawned

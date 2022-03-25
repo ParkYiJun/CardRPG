@@ -15,11 +15,14 @@ class CARDRPG_API ASpidering : public ACardRPG_CharacterBase
 
 public:
 	// Sets default values for this character's properties
+
 	ASpidering();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void PostInitializeComponents() override;
 
 public:	
 	// Called every frame
@@ -30,19 +33,27 @@ public:
 
 	void melee_attack();
 
+	void Dead();
+
 	UAnimMontage* get_montage() const;
 
-	float get_health() const;
-	float get_max_health() const;
-	void set_health(float const new_health);
+	UPROPERTY(EditDefaultsOnly)
+		class UStatComponent* Stats;
+
+	UPROPERTY()
+		bool IsDead = false;
+
+public:
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	class UWidgetComponent* widget_component;
-	float const max_health = 100;
-	float health;
+
+	UPROPERTY()
+		class USpideringAnimInstance* AnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* montage;
+		class UAnimMontage* montage;
 
 	UFUNCTION()
 		void on_attack_overlap_begin(
@@ -60,4 +71,7 @@ private:
 			UPrimitiveComponent* other_component,
 			int const other_body_index);
 
+
+public:
+	FTimerHandle WaidHandleDead;
 };

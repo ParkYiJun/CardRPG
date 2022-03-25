@@ -15,12 +15,15 @@
 #include "MainCharacter.h"
 #include "StatComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "SpideringAnimInstance.h"
+#include "Animation/AnimMontage.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ASpidering::ASpidering() :
-	health(max_health),
 	widget_component(CreateDefaultSubobject<UWidgetComponent>(TEXT("healthBar")))
 {
+	Stats = CreateDefaultSubobject<UStatComponent>(TEXT("STATS"));
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bUseControllerRotationYaw = false;
@@ -65,16 +68,43 @@ void ASpidering::on_attack_overlap_end(UPrimitiveComponent* const overlapped_com
 {
 }
 
+void ASpidering::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AnimInstance = Cast<USpideringAnimInstance>(GetMesh()->GetAnimInstance());
+
+}
+
 // Called every frame
 void ASpidering::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	auto const uw = Cast<UhealthBar>(widget_component->GetUserWidgetObject());
-	if (uw)
-	{
-		uw->set_bar_value_percent(health / max_health);
-	}
 
+}
+
+void ASpidering::Dead()
+{
+	AnimInstance->PlayDeadMontage();
+	float WaitTime = 1.0;
+	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
+	{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	UE_LOG(LogTemp, Warning, TEXT("DEAD"));
+	GetCharacterMovement()->Deactivate();
+	GetMesh()->SetSimulatePhysics(true);
+	AnimInstance->StopSlotAnimation(0.1f, "DefaultSlot");
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}), WaitTime, false);
+}
+
+float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Stats->OnAttacked(DamageAmount);
+	if (Stats->GetHp() <= 0 && IsDead == false)
+	{
+		Dead();
+		IsDead = true;
+	}
+	return DamageAmount;
 }
 
 // Called to bind functionality to input
@@ -97,17 +127,3 @@ UAnimMontage* ASpidering::get_montage() const
 	return montage;
 }
 
-float ASpidering::get_health() const
-{
-	return health;
-}
-
-float ASpidering::get_max_health() const
-{
-	return max_health;
-}
-
-void ASpidering::set_health(float const new_health)
-{
-	health = new_health;
-}
