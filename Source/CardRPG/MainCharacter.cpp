@@ -325,6 +325,10 @@ void AMainCharacter::Attack()
 		return;
 	}
 	AnimInstance->PlayAttackMontage();
+	if (ComboReset==true)
+	{
+		AttackIndex=1;
+	}
 
 	FVector SpawnLocation= CastFrom->GetComponentLocation();
 	FRotator SpawnRotation=GetCapsuleComponent()->GetComponentRotation();
@@ -342,6 +346,10 @@ void AMainCharacter::Attack()
 	AttackIndex = (AttackIndex + 1) % 6;
 	IsAttacking = true;
 
+	GetWorld()->GetTimerManager().SetTimer(ComboHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			ComboReset=true;
+		}), ComboWaitTime, false);
 }
 
 void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
@@ -374,11 +382,12 @@ void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
 		IceExplosion();//ice_explosion
 		break;
 	case 110: //electoronic Shock
+		ElectoronicShock();
 		break;
 	default:
 		break;
 	}
-	AttackIndex = 0;
+	AttackIndex = 1;
 }
 
 void AMainCharacter::UseSkill_R() { //Binding Q Key Released
