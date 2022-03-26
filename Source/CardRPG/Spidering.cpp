@@ -10,7 +10,6 @@
 #include "Components/WidgetComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
-#include "healthBar.h"
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "MainCharacter.h"
 #include "StatComponent.h"
