@@ -14,6 +14,7 @@
 #include "Runtime/Engine/Classes/Components/BoxComponent.h"
 #include "MainCharacter.h"
 #include "StatComponent.h"
+#include "MyUserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "SpideringAnimInstance.h"
 #include "Animation/AnimMontage.h"
@@ -33,9 +34,9 @@ ASpidering::ASpidering() :
 	if (widget_component)
 	{
 		widget_component->SetupAttachment(RootComponent);
-		widget_component->SetWidgetSpace(EWidgetSpace::Screen);
+		widget_component->SetWidgetSpace(EWidgetSpace::World);
 		widget_component->SetRelativeLocation(FVector(0.0f, 0.0f, 85.0f));
-		static ConstructorHelpers::FClassFinder<UUserWidget> widget_class(TEXT("/Game/UI/healthBar_BP"));
+		static ConstructorHelpers::FClassFinder<UUserWidget> widget_class(TEXT("/Game/UI/HPXP/WCBP_HP"));
 		if (widget_class.Succeeded())
 		{
 			widget_component->SetWidgetClass(widget_class.Class);
@@ -52,6 +53,11 @@ void ASpidering::BeginPlay()
 	{
 		right_fist_collision_box->OnComponentBeginOverlap.AddDynamic(this, &ASpidering::on_attack_overlap_begin);
 		right_fist_collision_box->OnComponentEndOverlap.AddDynamic(this, &ASpidering::on_attack_overlap_end);
+	}
+
+	class UMyUserWidget* widget = Cast<UMyUserWidget>(widget_component->GetWidget());
+	if (widget != nullptr) {
+		widget->BindHp(Stats);
 	}
 
 }

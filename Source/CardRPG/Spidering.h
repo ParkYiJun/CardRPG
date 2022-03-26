@@ -47,6 +47,7 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
+	UPROPERTY()
 	class UWidgetComponent* widget_component;
 
 	UPROPERTY()
