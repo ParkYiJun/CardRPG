@@ -36,6 +36,10 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE class UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
+	UPROPERTY()
+	int32 Damage;
+	UPROPERTY()
+	class AMainCharacter* MainCharacter;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

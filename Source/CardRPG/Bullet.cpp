@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "MainCharacter.h"
 #include "StatComponent.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
@@ -40,16 +41,19 @@ ABullet::ABullet()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = true;
 	// Die after 3 seconds by default
+
+	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	InitialLifeSpan = 5.0f;
 
 }
 
 void ABullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	Damage=MainCharacter->Stats->GetAttack();
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ONHIT!"));
-		UGameplayStatics::ApplyDamage(OtherActor, 10, NULL, GetOwner(), NULL);
+		UGameplayStatics::ApplyDamage(OtherActor, Damage, NULL, GetOwner(), NULL);
 		Destroy();
 	}
 

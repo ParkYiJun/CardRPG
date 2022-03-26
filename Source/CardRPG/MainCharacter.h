@@ -78,7 +78,10 @@ public:
 	FTimerHandle WaitHandleFast;
 	FTimerHandle WaitHandleDrone;
 	FTimerHandle WaidHandleDead;
+	FTimerHandle ComboHandle;
 
+	float ComboWaitTime = 10.0f;
+	bool ComboReset=false;
 	int32 SkillCode;
 
 

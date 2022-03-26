@@ -28,6 +28,9 @@ public:
 	UPROPERTY()
 		class USoundBase* EffectSound;
 
+	UPROPERTY()
+		class AMainCharacter* MainCharacter;
+
 
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
 
