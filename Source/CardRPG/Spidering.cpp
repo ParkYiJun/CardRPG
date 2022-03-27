@@ -20,7 +20,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Spidering_AIController.h"
 #include "InGameHud.h"
-#include "HealSkill.h"
+#include "SpideringDeath.h"
 
 // Sets default values
 ASpidering::ASpidering() :
@@ -109,10 +109,9 @@ float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 	Stats->OnAttacked(DamageAmount);
 	if (Stats->GetHp() <= 0 && IsDead == false)
 	{
-		Dead();
 		IsDead = true;
 		FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
-		GetWorld()->SpawnActor<AHealSkill>(CurrentLoc, FRotator(0, 0, 0));
+		GetWorld()->SpawnActor<ASpideringDeath>(CurrentLoc, FRotator(0, 0, 0));
 		Destroy();
 	}
 	return DamageAmount;
