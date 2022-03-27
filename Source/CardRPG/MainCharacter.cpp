@@ -95,7 +95,7 @@ AMainCharacter::AMainCharacter() :
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SM(TEXT("SkeletalMesh'/Game/ParagonPhase/Characters/Heroes/Phase/Meshes/Phase_GDC.Phase_GDC'"));
 
 
-	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-5.SE-5'"));
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/ParagonPhase/Characters/Heroes/Phase/Sounds/SoundWaves/Phase_Effort_Pain_03.Phase_Effort_Pain_03'"));
 	if (EF.Succeeded())
 	{
 		AttackedSound = EF.Object;
