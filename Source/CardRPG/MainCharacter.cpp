@@ -345,11 +345,6 @@ void AMainCharacter::Attack()
 
 	AttackIndex = (AttackIndex + 1) % 6;
 	IsAttacking = true;
-
-	GetWorld()->GetTimerManager().SetTimer(ComboHandle, FTimerDelegate::CreateLambda([&]()
-		{
-			ComboReset=true;
-		}), ComboWaitTime, false);
 }
 
 void AMainCharacter::UseSkill() {  //Binding Q Key Pressed

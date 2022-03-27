@@ -44,6 +44,7 @@ AShockSkill::AShockSkill()
 
 void AShockSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	Damage = MainCharacter->Stats->GetAttack();
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		GetOtherActor = OtherActor;
@@ -52,7 +53,7 @@ void AShockSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 			{
 
 				UE_LOG(LogTemp, Warning, TEXT("DotF"));
-				UGameplayStatics::ApplyDamage(GetOtherActor, 80, NULL, GetOwner(), NULL);
+				UGameplayStatics::ApplyDamage(GetOtherActor, Damage, NULL, GetOwner(), NULL);
 
 
 
@@ -70,10 +71,9 @@ void AShockSkill::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class 
 void AShockSkill::BeginPlay()
 {
 	Super::BeginPlay();
-	Super::BeginPlay();
-	//AudioComponent->SetSound(EffectSound);
-	//AudioComponent->SetVolumeMultiplier(10000.0f);
-	//AudioComponent->Play();
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->SetVolumeMultiplier(10000.0f);
+	AudioComponent->Play();
 }
 
 // Called every frame
