@@ -24,6 +24,12 @@ void USpideringAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (IsValid(Pawn))
 	{
 		auto spidering = Cast<ASpidering>(Pawn);
+		if (spidering)
+		{
+		}
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("NoCharacter"));
+		}
 
 	}
 
@@ -33,7 +39,7 @@ void USpideringAnimInstance::PlayDeadMontage()
 {
 	if (!Montage_IsPlaying(DeadMontage1))
 	{
-		Montage_Play(DeadMontage1, 1.0f);
+		Montage_Play(DeadMontage1, 10.0f);
 	}
 
 }

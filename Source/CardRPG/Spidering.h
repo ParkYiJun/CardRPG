@@ -24,6 +24,7 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -72,6 +73,8 @@ private:
 			UPrimitiveComponent* other_component,
 			int const other_body_index);
 
+	UPROPERTY()
+		class AInGameHud* InGameHud;
 
 public:
 	FTimerHandle WaidHandleDead;
