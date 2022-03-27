@@ -63,8 +63,9 @@ void ASpidering::BeginPlay()
 	class UMyUserWidget* widget = Cast<UMyUserWidget>(widget_component->GetWidget());
 	if (widget != nullptr) {
 		widget->BindHp(Stats);
+		widget->SetVisibility(ESlateVisibility::Collapsed);
 	}
-
+		
 }
 
 void ASpidering::on_attack_overlap_begin(UPrimitiveComponent* const overlapped_component, AActor* const other_actor, UPrimitiveComponent* other_component, int const other_body_index, bool const from_sweep, FHitResult const& sweep_result)
@@ -108,6 +109,22 @@ void ASpidering::Dead()
 
 float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	class UMyUserWidget* widget = Cast<UMyUserWidget>(widget_component->GetWidget());
+	widget->SetVisibility(ESlateVisibility::Visible);
+
+	GetWorld()->GetTimerManager().ClearTimer(HpVisibleHandle);
+	float WaitTime = 5.0f; //시간을 설정하고
+	GetWorld()->GetTimerManager().SetTimer(HpVisibleHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			class UMyUserWidget* widget = Cast<UMyUserWidget>(widget_component->GetWidget());
+			if (widget->IsVisible())
+			{
+				widget->SetVisibility(ESlateVisibility::Collapsed);
+			}
+
+		}), WaitTime, false);
+
+
 	FVector SpawnVector = this->GetMesh()->GetComponentLocation();
 	Stats->OnAttacked(DamageAmount);
 	GetWorld()->SpawnActor<ADamageTextActor>(GetMesh()->GetComponentLocation(), FRotator(0, 0, 0));
