@@ -95,7 +95,7 @@ AMainCharacter::AMainCharacter() :
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>SM(TEXT("SkeletalMesh'/Game/ParagonPhase/Characters/Heroes/Phase/Meshes/Phase_GDC.Phase_GDC'"));
 
 
-	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-5.SE-5'"));
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/ParagonPhase/Characters/Heroes/Phase/Sounds/SoundWaves/Phase_Effort_Pain_03.Phase_Effort_Pain_03'"));
 	if (EF.Succeeded())
 	{
 		AttackedSound = EF.Object;
@@ -350,6 +350,8 @@ void AMainCharacter::Attack()
 		{
 			ComboReset=true;
 		}), ComboWaitTime, false);
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 }
 
 void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
@@ -602,6 +604,8 @@ void AMainCharacter::ElectoronicShockOn()
 
 	AnimInstance->PlayWallSkillMontage();
 	GetWorld()->SpawnActor<AShockSkill>(ActorWorldLocation, SpawnRotation);
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 }
 
 #pragma endregion
@@ -644,6 +648,8 @@ void AMainCharacter::DroneAttack()
 			}), WaitTime, false); //�ݺ��� ���⼭ �߰� ������ ������ ��������
 		return;
 	}
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 }
 
 void AMainCharacter::IceExplosion()
@@ -656,6 +662,8 @@ void AMainCharacter::IceExplosion()
 	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, 0);
 	GetWorld()->SpawnActor<AIceSkill>(CurrentLoc, FRotator(0, 0, 0));
 	IsSkillUsing = true;
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 
 }
 
