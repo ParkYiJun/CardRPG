@@ -31,10 +31,6 @@ protected:
 	UPROPERTY()
 		class UAudioComponent* AudioComponent;
 	UPROPERTY(EditDefaultsOnly, Category = "Sound Asset")
-		class USoundCue* Title_Sound;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound Asset")
-		class USoundCue* Lobby_Sound;
-	UPROPERTY(EditDefaultsOnly, Category = "Sound Asset")
 		class UDataTable* Other_Sound;
 
 public:
@@ -46,20 +42,9 @@ public:
 		int32 GetCardCode(FName name);
 	UFUNCTION(BlueprintCallable, Category = "Widget Utilities")
 		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
-	UFUNCTION(BlueprintCallable, Category = "Widget Utilities")
-		void GotoLobby();
-	UFUNCTION(BlueprintCallable, Category = "Sound Utilities")
-		class USoundCue* GetTitleSound();
-	UFUNCTION(BlueprintCallable, Category = "Sound Utilities")
-		class USoundCue* GetLobbySound();
 	UFUNCTION(BlueprintCallable, Category = "Sound Utilities")
 		class USoundCue* GetSound(int32 SoundCase);
 
-
-	UPROPERTY(EditAnywhere, Category = "Widget")
-		TSubclassOf<UUserWidget> TitleUI;
-	UPROPERTY(EditAnywhere, Category = "Widget")
-		TSubclassOf<UUserWidget> LobbyUI;
 	UPROPERTY(EditAnywhere, Category = "Widget")
 		TSubclassOf<UUserWidget> MainUI;
 	UPROPERTY(EditAnywhere, Category = "Sound")
@@ -70,6 +55,4 @@ public:
 		float SMSoundEffect;
 
 	FORCEINLINE int32 GetCardsNum() { return this->CardNames.Num(); }
-	FORCEINLINE void SetMainUI() { ChangeMenuWidget(MainUI); }
-	FORCEINLINE void SetTitleUI() { ChangeMenuWidget(TitleUI); }
 };

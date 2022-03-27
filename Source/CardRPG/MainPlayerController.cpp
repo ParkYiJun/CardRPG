@@ -24,6 +24,8 @@ void AMainPlayerController::BeginPlay() {
 	}
 
 	DelGetThree.BindUFunction(this, FName("CreateGetsEvent"));
+	CreateWidget(this, MainUI)->AddToViewport();
+	SetInputMode(FInputModeGameOnly());
 }
 
 void AMainPlayerController::Tick(float DeltaSeconds)

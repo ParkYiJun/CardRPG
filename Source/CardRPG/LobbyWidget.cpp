@@ -4,7 +4,7 @@
 #include "LobbyWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
-#include "CardRPGGameModeBase.h"
+#include "LobbyGameMode.h"
 
 void ULobbyWidget::NativeConstruct() {
 	Super::NativeConstruct();
@@ -15,11 +15,9 @@ void ULobbyWidget::NativeConstruct() {
 }
 
 void ULobbyWidget::GotoNextLevel() {
-	ACardRPGGameModeBase* myGamemode = Cast<ACardRPGGameModeBase>(GetWorld()->GetAuthGameMode());
-	UE_LOG(LogTemp, Error, TEXT("Let's go to MainLevel"));
-	if (myGamemode != nullptr) {
-		myGamemode->SetMainUI();
-		GetOwningPlayer()->SetInputMode(FInputModeGameOnly());
-		GetOwningPlayer()->SetShowMouseCursor(false);
+	
+	ALobbyGameMode* lobbygamemode = Cast<ALobbyGameMode>(GetWorld()->GetAuthGameMode());
+	if (lobbygamemode != nullptr) {
+		lobbygamemode->GotoMainLevel();
 	}
 }

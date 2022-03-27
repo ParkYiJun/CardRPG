@@ -6,6 +6,7 @@
 #include "Engine/DataTable.h"
 #include "Internationalization/Text.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "CardRPGStructure.h"
 #include "MainPlayerController.h"
 #include "PlayerCardState.h"
@@ -44,8 +45,6 @@ void ACardRPGGameModeBase::BeginPlay() {
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, msg.ToString());
 	}
-
-	ChangeMenuWidget(TitleUI);
 }
 
 
@@ -79,20 +78,6 @@ void ACardRPGGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetCl
 			CurUI->AddToViewport();
 		}
 	}
-}
-
-void ACardRPGGameModeBase::GotoLobby(){
-	ChangeMenuWidget(LobbyUI);
-}
-
-USoundCue* ACardRPGGameModeBase::GetTitleSound()
-{
-	return Title_Sound;
-}
-
-USoundCue* ACardRPGGameModeBase::GetLobbySound()
-{
-	return Lobby_Sound;
 }
 
 USoundCue* ACardRPGGameModeBase::GetSound(int32 SoundCase)

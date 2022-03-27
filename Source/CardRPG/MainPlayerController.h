@@ -36,6 +36,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Player State")
 		APlayerCardState* CardState;
+	UPROPERTY(EditDefaultsOnly, Category = "Main UI")
+		TSubclassOf<UUserWidget> MainUI;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Event UI")
 		TSubclassOf<UUserWidget> CardGetEvent_UI;
 	
