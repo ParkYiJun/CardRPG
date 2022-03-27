@@ -278,7 +278,7 @@ void AMainCharacter::UpDown(float Value)
 {	
 	if ((IsAttacking==false)&&(IsSkillUsing==false))
 	{
-		AttackIndex=0;
+		
 		UpdownValue = Value;
 		AddMovementInput(GetActorForwardVector(), Value);
 	}
@@ -290,7 +290,7 @@ void AMainCharacter::LeftRight(float Value)
 {
 	if ((IsAttacking == false) && (IsSkillUsing == false))
 	{
-		AttackIndex = 0;
+		
 		LeftRightValue = Value;
 		AddMovementInput(GetActorRightVector(), Value);
 	}
@@ -325,10 +325,6 @@ void AMainCharacter::Attack()
 		return;
 	}
 	AnimInstance->PlayAttackMontage();
-	if (ComboReset==true)
-	{
-		AttackIndex=1;
-	}
 
 	FVector SpawnLocation= CastFrom->GetComponentLocation();
 	FRotator SpawnRotation=GetCapsuleComponent()->GetComponentRotation();
@@ -346,10 +342,6 @@ void AMainCharacter::Attack()
 	AttackIndex = (AttackIndex + 1) % 6;
 	IsAttacking = true;
 
-	GetWorld()->GetTimerManager().SetTimer(ComboHandle, FTimerDelegate::CreateLambda([&]()
-		{
-			ComboReset=true;
-		}), ComboWaitTime, false);
 	FVector const loc = GetActorLocation();
 	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 }

@@ -15,6 +15,7 @@
 #include "StatComponent.h"
 #include "MyUserWidget.h"
 #include "CardDropActor.h"
+#include "DamageTextActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "SpideringAnimInstance.h"
 #include "Animation/AnimMontage.h"
@@ -109,6 +110,7 @@ float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 {
 	FVector SpawnVector = this->GetMesh()->GetComponentLocation();
 	Stats->OnAttacked(DamageAmount);
+	GetWorld()->SpawnActor<ADamageTextActor>(GetMesh()->GetComponentLocation(), FRotator(0, 0, 0));
 	if (Stats->GetHp() <= 0 && IsDead == false)
 	{
 		IsDead = true;

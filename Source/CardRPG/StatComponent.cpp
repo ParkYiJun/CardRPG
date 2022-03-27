@@ -48,6 +48,8 @@ void UStatComponent::SetLevel(int32 NewLevel)
 			SetHp(StatData->MaxHp);
 			MaxHp = StatData->MaxHp;
 			Attack = StatData->Attack;
+			BPAttack=Attack;
+			GetBPAttack(BPAttack);
 			Defence=StatData->Defence;
 			RecoveryHp= StatData->RecoveryHp;
 			DropXp= StatData->DropXp;
@@ -96,5 +98,10 @@ void UStatComponent::SetXP(int32 DropXP)
 		SetLevel(Level);
 	}
 	OnXpChanged.Broadcast();
+}
+
+int32 UStatComponent::GetBPAttack(int32 BPAttackk)
+{
+	return BPAttackk;
 }
 

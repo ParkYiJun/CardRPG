@@ -4,17 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "DamageTextActor.generated.h"
+#include "BulletExplode.generated.h"
 
 UCLASS()
-class CARDRPG_API ADamageTextActor : public AActor
+class CARDRPG_API ABulletExplode : public AActor
 {
 	GENERATED_BODY()
 	
+	UPROPERTY(VisibleDefaultsOnly, Category = PSC)
+		class USphereComponent* CollisionComp;
 public:	
 	// Sets default values for this actor's properties
-	ADamageTextActor();
+	ABulletExplode();
 
+	UPROPERTY(VisibleAnywhere)
+		class UParticleSystemComponent* PSC;
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+		class USoundBase* EffectSound;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -22,15 +31,5 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-
-	UPROPERTY(EditAnywhere)
-		class USceneComponent* _RootComponent;
-
-	UPROPERTY(EditAnywhere)
-		class UWidgetComponent* MyWidget;
-
-	UPROPERTY()
-		class UDamageTextWidget* DamageTextWidget;
 
 };

@@ -10,6 +10,7 @@
 #include "StatComponent.h"
 #include "Components/AudioComponent.h"
 #include "Sound/SoundBase.h"
+#include "BulletExplode.h"
 // Sets default values
 ABullet::ABullet()
 {
@@ -43,6 +44,14 @@ ABullet::ABullet()
 	// Die after 3 seconds by default
 
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-4.SE-4'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
 	InitialLifeSpan = 5.0f;
 
 }
@@ -56,6 +65,7 @@ void ABullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AA
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, NULL, GetOwner(), NULL);
 		Destroy();
 	}
+	GetWorld()->SpawnActor<ABulletExplode>(this->GetActorLocation(), this->GetActorRotation());
 
 }
 
@@ -64,6 +74,9 @@ void ABullet::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AA
 void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->SetVolumeMultiplier(1000.0f);
+	AudioComponent->Play();
 }
 
 // Called every frame
