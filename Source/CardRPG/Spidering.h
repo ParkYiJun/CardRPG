@@ -76,6 +76,8 @@ private:
 	UPROPERTY()
 		class AInGameHud* InGameHud;
 
+	FTimerHandle HpVisibleHandle;
+	bool BarVisible=true;
 public:
 	FTimerHandle WaidHandleDead;
 };
