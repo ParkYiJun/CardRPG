@@ -25,7 +25,7 @@ ASpideringDeath::ASpideringDeath()
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
 	AudioComponent->SetupAttachment(CollisionComp);
 
-	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-14.SE-14'"));
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-34.SE-34'"));
 	if (EF.Succeeded())
 	{
 		EffectSound = EF.Object;
