@@ -18,6 +18,9 @@
 #include "SpideringAnimInstance.h"
 #include "Animation/AnimMontage.h"
 #include "Components/CapsuleComponent.h"
+#include "Spidering_AIController.h"
+#include "InGameHud.h"
+#include "SpideringDeath.h"
 
 // Sets default values
 ASpidering::ASpidering() :
@@ -90,7 +93,6 @@ void ASpidering::Tick(float DeltaTime)
 
 void ASpidering::Dead()
 {
-	AnimInstance->PlayDeadMontage();
 	float WaitTime = 1.0;
 	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
 	{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -107,8 +109,10 @@ float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 	Stats->OnAttacked(DamageAmount);
 	if (Stats->GetHp() <= 0 && IsDead == false)
 	{
-		Dead();
 		IsDead = true;
+		FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, -80);
+		GetWorld()->SpawnActor<ASpideringDeath>(CurrentLoc, FRotator(0, 0, 0));
+		Destroy();
 	}
 	return DamageAmount;
 }
