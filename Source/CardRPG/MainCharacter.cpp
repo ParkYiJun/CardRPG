@@ -350,6 +350,8 @@ void AMainCharacter::Attack()
 		{
 			ComboReset=true;
 		}), ComboWaitTime, false);
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 }
 
 void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
@@ -602,6 +604,8 @@ void AMainCharacter::ElectoronicShockOn()
 
 	AnimInstance->PlayWallSkillMontage();
 	GetWorld()->SpawnActor<AShockSkill>(ActorWorldLocation, SpawnRotation);
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 }
 
 #pragma endregion
@@ -644,6 +648,8 @@ void AMainCharacter::DroneAttack()
 			}), WaitTime, false); //�ݺ��� ���⼭ �߰� ������ ������ ��������
 		return;
 	}
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 }
 
 void AMainCharacter::IceExplosion()
@@ -656,6 +662,8 @@ void AMainCharacter::IceExplosion()
 	FVector CurrentLoc = GetCapsuleComponent()->GetComponentLocation() + FVector(0, 0, 0);
 	GetWorld()->SpawnActor<AIceSkill>(CurrentLoc, FRotator(0, 0, 0));
 	IsSkillUsing = true;
+	FVector const loc = GetActorLocation();
+	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
 
 }
 
