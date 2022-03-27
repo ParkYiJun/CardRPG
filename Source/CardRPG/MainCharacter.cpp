@@ -345,6 +345,7 @@ void AMainCharacter::Attack()
 
 	AttackIndex = (AttackIndex + 1) % 6;
 	IsAttacking = true;
+<<<<<<< HEAD
 
 	GetWorld()->GetTimerManager().SetTimer(ComboHandle, FTimerDelegate::CreateLambda([&]()
 		{
@@ -352,6 +353,8 @@ void AMainCharacter::Attack()
 		}), ComboWaitTime, false);
 	FVector const loc = GetActorLocation();
 	UAISense_Hearing::ReportNoiseEvent(GetWorld(), loc, 1.0f, this, 0.0f, tags::noise_tag);
+=======
+>>>>>>> 1d68aaa1a4822a8ef3992f4b81f3989f4e370ec7
 }
 
 void AMainCharacter::UseSkill() {  //Binding Q Key Pressed
