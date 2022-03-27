@@ -26,7 +26,11 @@ public:
 
 
 	FORCEINLINE class UBoxComponent* GetCollisionComp() const { return CollisionComp; }
-	
+	UPROPERTY()
+		class UAudioComponent* AudioComponent;
+
+	UPROPERTY()
+		class USoundBase* EffectSound;
 
 protected:
 	// Called when the game starts or when spawned

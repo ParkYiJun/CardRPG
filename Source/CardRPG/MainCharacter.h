@@ -113,7 +113,7 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		class AFollowingDrone* FollowingDrone;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(VisibleAnywhere)
 		class UStatComponent* Stats;
 
 private:

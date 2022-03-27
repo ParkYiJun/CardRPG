@@ -46,6 +46,10 @@ public:
 	int32 GetAttack() { return Attack; }
 
 
+	UFUNCTION(BlueprintCallable)
+	int32 GetBPAttack(int32 BPAttackk);
+
+
 
 private:
 	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
@@ -56,7 +60,7 @@ private:
 	int32 MaxHp;
 	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 Attack;
-	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
+	UPROPERTY(VisibleAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 Defence;
 	UPROPERTY(EditAnywhere, Category = Stat, Meta = (AllowPrivateAccess = true))
 	int32 RecoveryHp;
@@ -70,5 +74,7 @@ private:
 public:
 	FOnHpChanged OnHpChanged;
 	FOnHpChanged OnXpChanged;
+
+	int32 BPAttack;
 
 };

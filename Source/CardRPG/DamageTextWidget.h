@@ -26,6 +26,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 		UTextBlock* DamageText;
 
+	int32 Damage;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidgetAnim), Transient)
 		UWidgetAnimation* DamageAnimation;

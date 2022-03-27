@@ -8,6 +8,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "MainCharacter.h"
 #include "StatComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 
 // Sets default values
 AHardAttackSkill::AHardAttackSkill()
@@ -34,7 +36,14 @@ AHardAttackSkill::AHardAttackSkill()
 	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	SecondCollisionComp->OnComponentBeginOverlap.AddDynamic(this, &AHardAttackSkill::OnOverlapBegin);
 	SecondCollisionComp->OnComponentEndOverlap.AddDynamic(this, &AHardAttackSkill::OnOverlapEnd);
-	UE_LOG(LogTemp, Warning, TEXT("Created!"));
+
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
+	AudioComponent->SetupAttachment(CollisionComp);
+	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-36.SE-36'"));
+	if (EF.Succeeded())
+	{
+		EffectSound = EF.Object;
+	}
 	InitialLifeSpan = 4.0f;
 
 }
@@ -43,7 +52,9 @@ AHardAttackSkill::AHardAttackSkill()
 void AHardAttackSkill::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AudioComponent->SetSound(EffectSound);
+	AudioComponent->SetVolumeMultiplier(1000.0f);
+	AudioComponent->Play();
 }
 
 // Called every frame
