@@ -6,6 +6,8 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
+#include "MainCharacter.h"
+#include "StatComponent.h"
 #include "Sound/SoundBase.h"
 // Sets default values
 AMineExplode::AMineExplode()
@@ -27,7 +29,7 @@ AMineExplode::AMineExplode()
 
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
 	AudioComponent->SetupAttachment(CollisionComp);
-
+	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-8.SE-8'"));
 	if (EF.Succeeded())
 	{
@@ -57,10 +59,11 @@ void AMineExplode::Tick(float DeltaTime)
 
 void AMineExplode::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	float Damage= MainCharacter->Stats->GetAttack();
 
-	if (OtherActor && (OtherActor != this) && OtherComp)
+	if (OtherActor && (OtherActor != this) && OtherComp && !MainCharacter)
 	{
-			UGameplayStatics::ApplyDamage(OtherActor, 10, NULL, GetOwner(), NULL);
+			UGameplayStatics::ApplyDamage(OtherActor, Damage, NULL, GetOwner(), NULL);
 	}
 }
 
