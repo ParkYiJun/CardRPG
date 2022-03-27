@@ -19,6 +19,7 @@ public:
 	void BeginPlay() override;
 	void OnPossess(APawn* const pawn) override;
 	class UBlackboardComponent* get_blackboard() const;
+
 private:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	class UBehaviorTreeComponent* behavior_tree_component;
@@ -40,4 +41,6 @@ private:
 	void on_updated(TArray<AActor*> const& updated_actors);
 
 	void setup_perception_system();
+
+	void destroy();
 };

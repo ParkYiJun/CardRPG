@@ -17,6 +17,7 @@
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "GameFramework/Character.h"
+#include "Spidering.h"
 
 ASpidering_AIController::ASpidering_AIController(FObjectInitializer const& object_initializer)
 {
@@ -114,3 +115,4 @@ void ASpidering_AIController::setup_perception_system()
 	}
 	
 }
+
