@@ -17,7 +17,7 @@ AHardAttackSkill::AHardAttackSkill()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BIM"));
-	CollisionComp->InitBoxExtent(FVector(100.0f, 30.0f, 30.0f));
+	CollisionComp->InitBoxExtent(FVector(10, 10, 10));
 	//CollisionComp->SetWalkableSlopeOverride(FWalkableSlopeOverride(WalkableSlope_Unwalkable, 0.f));
 	//CollisionComp->CanCharacterStepUpOn = ECB_No;
 	RootComponent = CollisionComp;
@@ -28,7 +28,7 @@ AHardAttackSkill::AHardAttackSkill()
 	PSC->SetupAttachment(RootComponent);
 
 	SecondCollisionComp=CreateDefaultSubobject<UBoxComponent>(TEXT("COllider"));
-	SecondCollisionComp->InitBoxExtent(FVector(480,32,32));
+	SecondCollisionComp->InitBoxExtent(FVector(480,50,50));
 	SecondCollisionComp->SetRelativeLocation(FVector(445,0,0));
 	SecondCollisionComp->SetupAttachment(CollisionComp);
 

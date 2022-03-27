@@ -26,18 +26,20 @@ void ATB_TownTriggerBox::BeginPlay()
 void ATB_TownTriggerBox::OnOverlapBegin(class AActor* OverlappedActor, class AActor* OtherActor)
 {
 	UE_LOG(LogTemp,Warning,TEXT("ON"));
-	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	MainCharacter->TownAnimationVisible = true;
-	InGameHud->UpdateWidgetVisibilityTown();
-	InGameHud->PlayAnimationByNameTown();
-	FTimerHandle WaitHandle;
-	float WaitTime=4.0; //시간을 설정하고
-	GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
-		{
+	MainCharacter = Cast<AMainCharacter>(OtherActor);
+	if (MainCharacter != nullptr) {
+		MainCharacter->TownAnimationVisible = true;
+		InGameHud->UpdateWidgetVisibilityTown();
+		InGameHud->PlayAnimationByNameTown();
+		FTimerHandle WaitHandle;
+		float WaitTime = 4.0; //시간을 설정하고
+		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
+			{
 
-			Destroy();
+				Destroy();
 
-		}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+			}), WaitTime, false); //반복도 여기서 추가 변수를 선언해 설정가능
+	}
 }
 
 void ATB_TownTriggerBox::OnOverlapEnd(class AActor* OverlappedActor, class AActor* OtherActor)

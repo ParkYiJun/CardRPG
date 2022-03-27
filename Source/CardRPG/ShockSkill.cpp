@@ -17,7 +17,7 @@ AShockSkill::AShockSkill()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("WALL"));
-	CollisionComp->InitBoxExtent(FVector(50.0f, 20.0f, 500.0f));
+	CollisionComp->InitBoxExtent(FVector(100.0f, 100.0f, 500.0f));
 	RootComponent = CollisionComp;
 
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/InfinityBladeEffects/Effects/FX_Skill_Whirlwind/P_Whirlwind_Lightning_Veng_Typh_01.P_Whirlwind_Lightning_Veng_Typh_01'"));

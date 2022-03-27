@@ -392,6 +392,11 @@ void AMainCharacter::UseSkill_R() { //Binding Q Key Released
 		AudioComponent->SetSound(FireReadySound);
 		AudioComponent->Play();
 		break;
+
+	case 110: //electoronic Shock
+		ElectoronicShockOn();
+		AudioComponent->SetSound(FireReadySound);
+		AudioComponent->Play();
 	default:
 		break;
 	}
