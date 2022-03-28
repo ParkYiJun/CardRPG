@@ -97,6 +97,7 @@ void ASpidering::Tick(float DeltaTime)
 void ASpidering::Dead()
 {
 	float WaitTime = 1.0;
+	GetWorld()->GetTimerManager().ClearTimer(HpVisibleHandle);
 	GetWorld()->GetTimerManager().SetTimer(WaidHandleDead, FTimerDelegate::CreateLambda([&]()
 	{	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	UE_LOG(LogTemp, Warning, TEXT("DEAD"));
@@ -117,7 +118,7 @@ float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 	GetWorld()->GetTimerManager().SetTimer(HpVisibleHandle, FTimerDelegate::CreateLambda([&]()
 		{
 			class UMyUserWidget* widget = Cast<UMyUserWidget>(widget_component->GetWidget());
-			if (widget->IsVisible())
+			if (widget->IsVisible()&&widget)
 			{
 				widget->SetVisibility(ESlateVisibility::Collapsed);
 			}
@@ -135,6 +136,7 @@ float ASpidering::TakeDamage(float DamageAmount, struct FDamageEvent const& Dama
 		GetWorld()->SpawnActor<ASpideringDeath>(CurrentLoc, FRotator(0, 0, 0));
 		GetWorld()->SpawnActor<ACardDropActor>(RootComponent->GetComponentLocation() + SpawnVector, FRotator(0, 0, 0));
 		GetWorld()->SpawnActor<ACardDropActor>(RootComponent->GetComponentLocation() + SpawnVector, FRotator(0, 0, 0));
+		GetWorld()->GetTimerManager().ClearTimer(HpVisibleHandle);
 		Destroy();
 	}
 	return DamageAmount;
