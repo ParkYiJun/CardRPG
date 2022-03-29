@@ -39,7 +39,7 @@ ASpidering::ASpidering() :
 	{
 		widget_component->SetupAttachment(RootComponent);
 		widget_component->SetWidgetSpace(EWidgetSpace::Screen);
-		widget_component->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
+		widget_component->SetRelativeLocation(FVector(0.0f, 0.0f, 80.0f));
 		static ConstructorHelpers::FClassFinder<UUserWidget> widget_class(TEXT("/Game/UI/HPXP/WCBP_HP"));
 		if (widget_class.Succeeded())
 		{
