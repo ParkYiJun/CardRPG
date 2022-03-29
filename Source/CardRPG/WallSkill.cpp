@@ -51,7 +51,7 @@ void AWallSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		GetOtherActor=OtherActor;
-		float WaitTime = 1.0f;
+		float WaitTime = 0.2f;
 		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
 			{
 

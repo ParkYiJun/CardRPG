@@ -48,7 +48,7 @@ void AShockSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, clas
 	if (OtherActor && (OtherActor != this) && OtherComp)
 	{
 		GetOtherActor = OtherActor;
-		float WaitTime = 1.0f;
+		float WaitTime = 0.2f;
 		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
 			{
 
