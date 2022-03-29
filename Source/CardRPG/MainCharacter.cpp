@@ -62,6 +62,9 @@ AMainCharacter::AMainCharacter() :
 
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
+	SpringArm1 = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM1"));
+	Camera1 = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA1"));
+
 	CastFrom= CreateDefaultSubobject<USceneComponent>(TEXT("CASTFROM"));
 	DroneLocation= CreateDefaultSubobject<USceneComponent>(TEXT("DRONELOCATION"));
 	FireTornadoLocation = CreateDefaultSubobject<USceneComponent>(TEXT("FIRETORNADOLOCATION"));
@@ -73,6 +76,10 @@ AMainCharacter::AMainCharacter() :
 	SpringArm->SetupAttachment(GetCapsuleComponent());
 	SpringArm->bUsePawnControlRotation=true;
 	Camera->SetupAttachment(SpringArm);
+
+	SpringArm1->SetupAttachment(GetCapsuleComponent());
+	Camera1->SetupAttachment(SpringArm1);
+
 	CastFrom->SetupAttachment(GetCapsuleComponent());
 	DroneLocation->SetupAttachment(GetCapsuleComponent());
 	FireTornadoLocation->SetupAttachment(GetCapsuleComponent());
@@ -80,8 +87,14 @@ AMainCharacter::AMainCharacter() :
 	TeleportLocation->SetupAttachment(GetCapsuleComponent());
 	InteractionBox->SetupAttachment(RootComponent);
 	AudioComponent->SetupAttachment(RootComponent);
+
 	SpringArm->TargetArmLength = 350.0f;
 	SpringArm->SetRelativeRotation(FRotator(-25.0f, 0.0f, 0.0f));
+	SpringArm1->TargetArmLength = 350.0f;
+	SpringArm1->SetRelativeLocation(FVector(700,0,80.0f));
+	SpringArm1->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+	Camera1->SetRelativeRotation(FRotator(0,0,-180));
+
 	CastFrom->SetRelativeLocation(FVector(85.f,0.f,20.f));
 	DroneLocation->SetRelativeLocation(FVector(5.0f, 140.0f, 45.0f));
 	FireTornadoLocation->SetRelativeLocation(FVector(500.0f, 0.f,0.0f));
@@ -155,7 +168,7 @@ void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	
+	Camera1->Deactivate();
 	PC = Cast<APlayerController>(GetController());
     CursorToWorld->SetVisibility(false);
 	//InteractionBox->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnBoxBeginOverlap);
@@ -272,6 +285,7 @@ void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	//Interact Key
 	PlayerInputComponent->BindAction(TEXT("Interact"),EInputEvent::IE_Pressed,this, &AMainCharacter::OnInteract);
 	PlayerInputComponent->BindAction(TEXT("Distract"), IE_Pressed, this, &AMainCharacter::on_distract);
+	PlayerInputComponent->BindAction(TEXT("CameraChange"),IE_Pressed,this,&AMainCharacter::ChangeCamera);
 }
 
 void AMainCharacter::UpDown(float Value)
@@ -739,6 +753,21 @@ void AMainCharacter::OnInteract()
 	{
 		Interface->InteractWithMe();
 	}
+}
+
+void AMainCharacter::ChangeCamera()
+{
+	if (Camera1->IsActive())
+	{
+		Camera1->Deactivate();
+		Camera->Activate();
+	}
+	else
+	{
+		Camera1->Activate();
+		Camera->Deactivate();
+	}
+
 }
 
 void AMainCharacter::setup_stimulus()

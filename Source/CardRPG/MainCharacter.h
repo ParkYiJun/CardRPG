@@ -66,6 +66,7 @@ public:
 	void IceExplosion();
 	void Dead();
 	void OnInteract();
+	void ChangeCamera();
 
 
 public:
@@ -91,6 +92,12 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 		class UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere)
+		class USpringArmComponent* SpringArm1;
+
+	UPROPERTY(VisibleAnywhere)
+		class UCameraComponent* Camera1;
 public:
 	UPROPERTY(VisibleAnywhere)
 		class USceneComponent* CastFrom;
