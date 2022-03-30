@@ -14,3 +14,7 @@ Content/MegaGameMusicCollection/AdventureGameMusicPack/Wavs/A_Long_Journey__loop
 Content/MegaGameMusicCollection/FantasyAdventureMusicPack/Wavs/Ice_and_Fire.uasset filter=lfs diff=lfs merge=lfs -text
 Content/Sound/DarkMystery_StartMap.uasset filter=lfs diff=lfs merge=lfs -text
 Content/Sound/DarkMystery_StartMap.wav filter=lfs diff=lfs merge=lfs -text
+Content/Resources/Movie/troll_appear_scene.wav filter=lfs diff=lfs merge=lfs -text
+Content/Resources/Movie/troll_appear_scene.mp4 filter=lfs diff=lfs merge=lfs -text
+Content/Resources/Movie/troll_appear_scene.uasset filter=lfs diff=lfs merge=lfs -text
+Content/Resources/Movie/Boss.mp4 filter=lfs diff=lfs merge=lfs -text
