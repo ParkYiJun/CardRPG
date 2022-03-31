@@ -6,7 +6,7 @@
 	"Modules": [
 		{
 			"Name": "CardRPG",
-			"Type": "Runtime",
+			"Type": "DeveloperTool",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
@@ -21,14 +21,17 @@
 	"Plugins": [
 		{
 			"Name": "Landmass",
+			"Type": "DeveloperTool",
 			"Enabled": true
 		},
 		{
 			"Name": "ApexDestruction",
+			"Type": "DeveloperTool",
 			"Enabled": true
 		},
 		{
 			"Name": "MinimapPlugin",
+			"Type": "DeveloperTool",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/ad08325742e24fb0836391bca25c72bb"
 		}
