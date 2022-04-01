@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Components/AudioComponent.h"
+#include "MainCharacter.h"
 #include "Sound/SoundBase.h"
 
 // Sets default values
@@ -27,7 +28,7 @@ ABlueRush::ABlueRush()
 
 	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SOUNDEFFECT"));
 	AudioComponent->SetupAttachment(CollisionComp);
-
+	MainCharacter = Cast<AMainCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	static ConstructorHelpers::FObjectFinder<USoundBase> EF(TEXT("SoundWave'/Game/Resources/soundEffect/SE-13.SE-13'"));
 	if (EF.Succeeded())
 	{
@@ -55,7 +56,7 @@ void ABlueRush::Tick(float DeltaTime)
 
 void ABlueRush::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor && (OtherActor != this) && OtherComp)
+	if (OtherActor && (OtherActor != this) && OtherComp &&!MainCharacter)
 	{
 		UGameplayStatics::ApplyDamage(OtherActor, 10, NULL, GetOwner(), NULL);
 	}

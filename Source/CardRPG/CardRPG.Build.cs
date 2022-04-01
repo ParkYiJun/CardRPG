@@ -17,9 +17,5 @@ public class CardRPG : ModuleRules
 
         // To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
 
-        if (Target.Type != TargetType.Editor)
-        {
-            throw new BuildException("Unable to instantiate UnrealEd module for non-editor targets.");
-        }
     }
 }

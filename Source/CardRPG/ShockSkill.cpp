@@ -45,14 +45,13 @@ AShockSkill::AShockSkill()
 void AShockSkill::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Damage = MainCharacter->Stats->GetAttack();
-	if (OtherActor && (OtherActor != this) && OtherComp)
+	if (OtherActor && (OtherActor != this) && OtherComp &&!MainCharacter)
 	{
 		GetOtherActor = OtherActor;
 		float WaitTime = 0.2f;
 		GetWorld()->GetTimerManager().SetTimer(WaitHandle, FTimerDelegate::CreateLambda([&]()
 			{
 
-				UE_LOG(LogTemp, Warning, TEXT("DotF"));
 				UGameplayStatics::ApplyDamage(GetOtherActor, Damage, NULL, GetOwner(), NULL);
 
 

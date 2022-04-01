@@ -53,7 +53,7 @@ ASpidering::ASpidering() :
 void ASpidering::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Stats->SetLevel(3);
 	if (right_fist_collision_box)
 	{
 		right_fist_collision_box->OnComponentBeginOverlap.AddDynamic(this, &ASpidering::on_attack_overlap_begin);
